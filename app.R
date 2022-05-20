@@ -56,7 +56,7 @@ server <- function(input, output) {
      #  }
       return(
         e %>% 
-          e_x_axis(index=0, show=(FALSE || (axis %in% input$options)), axisLabel=axis)
+          e_axis_(axis=c(substr(axis,1,1)), show=(FALSE || (axis %in% input$options)))
       )
     }
     
@@ -77,11 +77,13 @@ server <- function(input, output) {
       plot()
       # e_charts(input$criteria)로는 오류 발생. e_charts_로만 가능한데 이 이유를 찾아보아야 함.
       # e_charts 랑 e_charts_ 는 파라미터를 names로 보느냐 character로 받느냐의 차이.
+      
+      # 현재 두개 입력시 그래프가 나타나지 않는데, 두개 입력되었을 경우 %>% e_charts(input$describe[2])를 추가할 수 있는 방법이 있을까요?
     } 
       
   })
   
-  output$test <- renderText({
+  output$test <- renderText({ # 테스트용입니다.
     (function (x) substr(x,1,1)) (as.list(input$describe))
   })
 }
