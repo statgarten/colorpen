@@ -10,8 +10,14 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectizeInput(
+        inputId = "plottype",
+        label = "Select Type of Plot",
+        choices = c("Scatter Plot" = "scatter", "Bar Plot" = "bar", "Box Plot" = "box", "Line Plot" = "line"),
+        selected = "scatter"
+      ),
+      selectizeInput(
         inputId = "criteria",
-        label = "criteria",
+        label = "Select Variable for Criteria",
         choices = mtcars %>% colnames(),
         selected = NULL
       ),
@@ -33,7 +39,7 @@ ui <- fluidPage(
       ),
       selectizeInput(
         inputId = "factor",
-        label = "Select Factor Variable",
+        label = "Select Variable for Factor",
         choices = c("NA", mtcars %>% colnames()),
         selected = NULL,
         multiple = FALSE,
