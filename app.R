@@ -48,25 +48,43 @@ server <- function(input, output) {
     list(input$criteria, input$describe, input$options)
   })
 
-  
   output$test <- renderText({ # 테스트용입니다.
-    (function (x) substr(x,1,1)) (as.list(input$describe))
+    length(input$describe)
   })
   
   observeEvent(
     updateTrigger(),
-    output$scatterPlot <- renderEcharts4r({
+    {
+      output$scatterPlot <- renderEcharts4r({
       viewAxis <- function(e, axis){
         return(
           e %>% 
-            e_axis_(label="asdf", axis=c(substr(axis,1,1)), show=(FALSE || (axis %in% input$options)))
+            e_axis_(label = "asdf", axis = c(substr(axis,1,1)), show = (FALSE || (axis %in% input$options)))
+        )
+      }
+      viewDescribe <- function(e) {
+        switch(
+          length(input$describe),
+          '1'={
+           return(
+             e %>% 
+               e_scatter_(input$describe)
+           )
+          },
+          '2'={
+           return(
+             e %>% 
+               e_scatter_(input$describe[1]) %>% 
+               e_scatter_(input$describe[2])
+           )
+          },
         )
       }
       plot <- function(){
         return(
           data %>%
             e_charts_(input$criteria) %>%
-            e_scatter_(input$describe) %>% 
+            viewDescribe %>% 
             e_toolbox_feature (
               feature = c("saveAsImage")
             ) %>% 
@@ -82,6 +100,7 @@ server <- function(input, output) {
         # 현재 두개 입력시 그래프가 나타나지 않는데, 두개 입력되었을 경우 %>% e_charts(input$describe[2])를 추가할 수 있는 방법이 있을까요?
       } 
     })
+    }
   )
 }
 
