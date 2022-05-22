@@ -31,6 +31,16 @@ ui <- fluidPage(
         # input$describe의 type은 character인데, 이걸 list나 vector로 변환해도 한번에 처리 는 어려운 것 같음.
         # 그런데 mode()로 볼때는 character였는데, input$describe[1] 이런식의 호출도 되는 것으로 봐서 또 다른것인지 의문이 듦.
       ),
+      selectizeInput(
+        inputId = "factor",
+        label = "Select Factor Variable",
+        choices = c("NA", mtcars %>% colnames()),
+        selected = NULL,
+        multiple = FALSE,
+        # 를 넣으면 여러개가 다 그래프에 나와야 하는데, input$describe로는 오류가 남.
+        # input$describe의 type은 character인데, 이걸 list나 vector로 변환해도 한번에 처리 는 어려운 것 같음.
+        # 그런데 mode()로 볼때는 character였는데, input$describe[1] 이런식의 호출도 되는 것으로 봐서 또 다른것인지 의문이 듦.
+      ),
     ),
     mainPanel(
       textOutput("test"),
@@ -72,6 +82,7 @@ server <- function(input, output) {
       plot <- function(){
         return(
           data %>%
+            group_by_(input$factor) %>% 
             e_charts_(input$criteria) %>%
             viewDescribe %>% 
             e_toolbox_feature (
