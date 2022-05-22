@@ -18,7 +18,7 @@ ui <- fluidPage(
       selectizeInput(
         inputId = "criteria",
         label = "Select Variable for Criteria",
-        choices = mtcars %>% colnames(),
+        choices = data %>% colnames(),
         selected = NULL
       ),
       checkboxGroupInput(
@@ -30,7 +30,7 @@ ui <- fluidPage(
       selectizeInput(
         inputId = "describe",
         label = "Select Variable to Describe",
-        choices = mtcars %>% colnames(),
+        choices = data %>% colnames(),
         selected = NULL,
         multiple = FALSE,
         # 를 넣으면 여러개가 다 그래프에 나와야 하는데, input$describe로는 오류가 남.
@@ -40,7 +40,7 @@ ui <- fluidPage(
       selectizeInput(
         inputId = "factor",
         label = "Select Variable for Factor",
-        choices = c("NA", mtcars %>% colnames()),
+        choices = c("NA", data %>% colnames()),
         selected = NULL,
         multiple = FALSE,
         # 를 넣으면 여러개가 다 그래프에 나와야 하는데, input$describe로는 오류가 남.
