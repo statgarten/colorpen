@@ -43,20 +43,13 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
+  
   output$scatterPlot <- renderEcharts4r({
     
     axis <- function(e, axis){
-     # if(axis %in% input$options){
-     #    return(
-     #      e %>% 
-     #      e_x_axis(index=0, show=FALSE, axisLabel=axis)
-     #    )
-     #  } else {
-     #    return(e)
-     #  }
       return(
         e %>% 
-          e_axis_(axis=c(substr(axis,1,1)), show=(FALSE || (axis %in% input$options)))
+          e_axis_(label="asdf", axis=c(substr(axis,1,1)), show=(FALSE || (axis %in% input$options)))
       )
     }
     
@@ -68,6 +61,7 @@ server <- function(input, output) {
         e_toolbox_feature (
           feature = c("saveAsImage")
         ) %>% 
+        e_axis_labels(x=input$criteria, y=input$describe) %>% 
         axis("xaxis") %>% 
         axis("yaxis")
       )
