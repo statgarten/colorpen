@@ -12,7 +12,10 @@ ui <- fluidPage(
       selectizeInput(
         inputId = "plottype",
         label = "Select Type of Plot",
-        choices = c("Scatter Plot" = "scatter", "Bar Plot" = "bar", "Box Plot" = "box", "Line Plot" = "line"),
+        choices = c("Scatter Plot" = "scatter", 
+                    "Bar Plot" = "bar", 
+                    "Box Plot" = "box", 
+                    "Line Plot" = "line"),
         selected = "scatter"
       ),
       selectizeInput(
@@ -59,7 +62,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
   
-  updateTrigger <- reactive({
+  updateTrigger <- reactive({ # Plot이 Update되는 조건 지정
     list(input$criteria, input$describe, input$options)
   })
 
@@ -71,21 +74,22 @@ server <- function(input, output) {
     updateTrigger(),
     {
       output$scatterPlot <- renderEcharts4r({
-      viewAxis <- function(e, axis){
+      viewAxis <- function(e, axis){ # X, Y축에 관한 설정을 하는 함수
         return(
           e %>% 
-            e_axis_(label = "asdf", axis = c(substr(axis,1,1)), show = (FALSE || (axis %in% input$options)))
+            e_axis_(label = "asdf", axis = c(substr(axis,1,1)), 
+                    show = (FALSE || (axis %in% input$options)))
         )
       }
-      viewDescribe <- function(e) {
-        func <-  e
+      viewDescribe <- function(e) { # 1개 이상의 Describe Variable을 사용하여 Plot 그리는 함수
+        func <- e
         for(describe in input$describe){
           func <- func %>% e_scatter_(describe)
         }
         
         return(func)
       }
-      plot <- function(){
+      plot <- function(){ # Plot을 직접 그리는 함수
         return(
           data %>%
             group_by_(input$factor) %>% 
