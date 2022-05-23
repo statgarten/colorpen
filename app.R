@@ -14,7 +14,6 @@ ui <- fluidPage(
         label = "Select Type of Plot",
         choices = c("Scatter Plot" = "scatter", 
                     "Bar Plot" = "bar", 
-                    "Box Plot" = "box", 
                     "Line Plot" = "line"),
         selected = "scatter"
       ),
@@ -55,7 +54,7 @@ ui <- fluidPage(
       textOutput("test"),
       # 처음에 plotOutput으로 충분한지 알았으나, reference 찾고 난 후 eharts4r에 맞는 output이 있다는 것을 알았음.
       # 패키지별로 output이 따로 존재한다고 생각해야 할 것 같음.
-      echarts4rOutput("scatterPlot"),
+      echarts4rOutput("plot"),
     )
   )
 )
@@ -63,7 +62,7 @@ ui <- fluidPage(
 server <- function(input, output) {
   
   updateTrigger <- reactive({ # Plot이 Update되는 조건 지정
-    list(input$criteria, input$describe, input$options)
+    list(input$criteria, input$describe, input$options, input$plottype)
   })
 
   output$test <- renderText({ # 테스트용입니다.
@@ -73,7 +72,7 @@ server <- function(input, output) {
   observeEvent(
     updateTrigger(),
     {
-      output$scatterPlot <- renderEcharts4r({
+      output$plot <- renderEcharts4r({
       viewAxis <- function(e, axis){ # X, Y축에 관한 설정을 하는 함수
         return(
           e %>% 
@@ -81,26 +80,76 @@ server <- function(input, output) {
                     show = (FALSE || (axis %in% input$options)))
         )
       }
-      viewDescribe <- function(e) { # 1개 이상의 Describe Variable을 사용하여 Plot 그리는 함수
+      viewScatterDescribe <- function(e) { # 1개 이상의 Describe Variable을 사용하여 Plot 그리는 함수
         func <- e
-        for(describe in input$describe){
-          func <- func %>% e_scatter_(describe)
-        }
+        #for(describe in input$describe){
+        #  func <- func %>% e_scatter_(describe)
+        #}
+        
+        func <- func %>% e_scatter_(input$describe)
+
+        return(func)
+      }
+      viewBarDescribe <- function(e) {
+        func <- e
+
+        func <- func %>% e_bar_(input$describe)
         
         return(func)
       }
+      viewLineDescribe <- function(e) {
+        func <- e
+        
+        func <- func %>% e_line_(input$describe)
+        
+        return(func)
+      }
+
       plot <- function(){ # Plot을 직접 그리는 함수
-        return(
-          data %>%
-            group_by_(input$factor) %>% 
-            e_charts_(input$criteria) %>%
-            viewDescribe %>% 
-            e_toolbox_feature (
-              feature = c("saveAsImage")
-            ) %>% 
-            e_axis_labels(x=input$criteria, y=input$describe) %>% 
-            viewAxis("xaxis") %>% 
-            viewAxis("yaxis")
+        switch(
+          input$plottype,
+          "scatter" = {
+            return(
+              data %>%
+                group_by_(input$factor) %>% 
+                e_charts_(input$criteria) %>%
+                viewScatterDescribe %>% 
+                e_toolbox_feature (
+                  feature = c("saveAsImage")
+                ) %>% 
+                e_axis_labels(x=input$criteria, y=input$describe) %>% 
+                viewAxis("xaxis") %>% 
+                viewAxis("yaxis")
+            )
+          },
+          "bar" = {
+            return(
+              data %>%
+                group_by_(input$factor) %>% 
+                e_charts_(input$criteria) %>% 
+                viewBarDescribe %>% 
+                e_toolbox_feature (
+                  feature = c("saveAsImage")
+                ) %>% 
+                e_axis_labels(x=input$criteria, y=input$describe) %>% 
+                viewAxis("xaxis") %>% 
+                viewAxis("yaxis")
+            )
+          },
+          "line" = {
+            return(
+              data %>%
+                group_by_(input$factor) %>% 
+                e_charts_(input$criteria) %>% 
+                viewLineDescribe %>% 
+                e_toolbox_feature (
+                  feature = c("saveAsImage")
+                ) %>% 
+                e_axis_labels(x=input$criteria, y=input$describe) %>% 
+                viewAxis("xaxis") %>% 
+                viewAxis("yaxis")
+            )
+          }
         )
       }
       if(!is.null(input$describe)) { # Describe에 아무것도 입력되지 않은 경우.
