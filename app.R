@@ -1,7 +1,10 @@
 library(shiny)
 library(echarts4r)
 library(dplyr)
-library(stringi)
+library(shinydashboard)
+library(shinydashboardPlus)
+library(DT)
+library(shinyjs)
 
 data <- mtcars %>% as.data.frame()
 
