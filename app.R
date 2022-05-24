@@ -84,7 +84,7 @@ server <- function(input, output) {
   })
 
   output$test <- renderText({ # 테스트용입니다.
-    mode(input$regression)
+    paste(input$describe, "~", input$criteria)
   })
 
   
@@ -143,13 +143,13 @@ server <- function(input, output) {
               data %>%
                 group_by_(input$factor) %>% 
                 e_charts_(input$criteria) %>%
-                viewScatterDescribe %>% 
                 e_toolbox_feature (
                   feature = c("saveAsImage")
                 ) %>% 
                 e_axis_labels(x=input$criteria, y=input$describe) %>% 
                 viewAxis("xaxis") %>% 
                 viewAxis("yaxis") %>% 
+                viewScatterDescribe %>% 
                 viewRegression(input$regression)
             )
           },
@@ -158,13 +158,13 @@ server <- function(input, output) {
               data %>%
                 group_by_(input$factor) %>% 
                 e_charts_(input$criteria) %>% 
-                viewBarDescribe %>% 
                 e_toolbox_feature (
                   feature = c("saveAsImage")
                 ) %>% 
                 e_axis_labels(x=input$criteria, y=input$describe) %>% 
                 viewAxis("xaxis") %>% 
-                viewAxis("yaxis")
+                viewAxis("yaxis") %>% 
+                viewBarDescribe
             )
           },
           "line" = {
@@ -172,13 +172,13 @@ server <- function(input, output) {
               data %>%
                 group_by_(input$factor) %>% 
                 e_charts_(input$criteria) %>% 
-                viewLineDescribe %>% 
                 e_toolbox_feature (
                   feature = c("saveAsImage")
                 ) %>% 
                 e_axis_labels(x=input$criteria, y=input$describe) %>% 
                 viewAxis("xaxis") %>% 
-                viewAxis("yaxis")
+                viewAxis("yaxis") %>% 
+                viewLineDescribe
             )
           }
         )
