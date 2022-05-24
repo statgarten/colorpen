@@ -5,8 +5,11 @@ library(shinydashboard)
 library(shinydashboardPlus)
 library(DT)
 library(shinyjs)
+library(tibble)
 
-data <- mtcars %>% as.data.frame()
+originData <- mtcars
+
+data <- originData %>% as.data.frame()
 
 ui <- fluidPage(
   titlePanel("plotGen - Plot Genesis"),
@@ -20,6 +23,18 @@ ui <- fluidPage(
                     "Line Plot" = "line"),
         selected = "scatter"
       ),
+      conditionalPanel( # Scatter Plot일때
+        condition = "input.plottype == 'scatter'",
+        radioButtons(
+          inputId="regression",
+          label="Method for Regression",
+          choices = c("None", "lm", "glm"),
+          selected = "None",
+          inline = TRUE,
+        ),
+        #selectInput("smoothMethod", "Method",
+        #            list("lm", "glm", "gam", "loess", "rlm"))
+      ),
       selectizeInput(
         inputId = "criteria",
         label = "Select Variable for Criteria",
@@ -29,7 +44,7 @@ ui <- fluidPage(
       checkboxGroupInput(
         inputId = "options",
         label = "Option for Plot",
-        choices = c("Show X-Axis" = "xaxis", "Show Y-Axis" = "yaxis"),
+        choices = c("Show X-Axis" = "xaxis", "Show Y-Axis" = "yaxis", "Use Row Name" = "userowname"),
         selected = c("xaxis", "yaxis"),
       ),
       selectizeInput(
@@ -54,7 +69,7 @@ ui <- fluidPage(
       ),
     ),
     mainPanel(
-      textOutput("test"),
+      textOutput("test"), 
       # 처음에 plotOutput으로 충분한지 알았으나, reference 찾고 난 후 eharts4r에 맞는 output이 있다는 것을 알았음.
       # 패키지별로 output이 따로 존재한다고 생각해야 할 것 같음.
       echarts4rOutput("plot"),
@@ -69,19 +84,22 @@ server <- function(input, output) {
   })
 
   output$test <- renderText({ # 테스트용입니다.
-    length(input$describe)
+    mode(input$regression)
   })
+
   
   observeEvent(
     updateTrigger(),
     {
       output$plot <- renderEcharts4r({
       viewAxis <- function(e, axis){ # X, Y축에 관한 설정을 하는 함수
-        return(
-          e %>% 
-            e_axis_(label = "asdf", axis = c(substr(axis,1,1)), 
-                    show = (FALSE || (axis %in% input$options)))
-        )
+        func <- e
+        
+        func <- func %>% 
+          e_axis_(label = "asdf", axis = c(substr(axis,1,1)), 
+                  show = (FALSE || (axis %in% input$options)))
+        
+        return(func)
       }
       viewScatterDescribe <- function(e) { # 1개 이상의 Describe Variable을 사용하여 Plot 그리는 함수
         func <- e
@@ -107,7 +125,16 @@ server <- function(input, output) {
         
         return(func)
       }
-
+      viewRegression <- function(e, method){
+        func <- e
+        
+        if(method == "lm"){
+          func <- func %>% e_lm(formula = paste(input$describe, "~", input$criteria), 
+                                name=paste(input$describe, "~", input$criteria, "w/ lm"))
+        }
+        
+        return(func)
+      }
       plot <- function(){ # Plot을 직접 그리는 함수
         switch(
           input$plottype,
@@ -122,7 +149,8 @@ server <- function(input, output) {
                 ) %>% 
                 e_axis_labels(x=input$criteria, y=input$describe) %>% 
                 viewAxis("xaxis") %>% 
-                viewAxis("yaxis")
+                viewAxis("yaxis") %>% 
+                viewRegression(input$regression)
             )
           },
           "bar" = {
@@ -155,12 +183,10 @@ server <- function(input, output) {
           }
         )
       }
-      if(!is.null(input$describe)) { # Describe에 아무것도 입력되지 않은 경우.
-        plot()
+      plot()
         # e_charts(input$criteria)로는 오류 발생. e_charts_로만 가능한데 이 이유를 찾아보아야 함.
         # e_charts 랑 e_charts_ 는 파라미터를 names로 보느냐 character로 받느냐의 차이.
         # 현재 두개 입력시 그래프가 나타나지 않는데, 두개 입력되었을 경우 %>% e_charts(input$describe[2])를 추가할 수 있는 방법이 있을까요?
-      } 
     })
     }
   )
