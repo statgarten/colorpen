@@ -129,11 +129,19 @@ server <- function(input, output) {
         func <- e
         
         if(method == "lm"){
-          func <- func %>% e_lm(formula = paste(input$describe, "~", input$criteria), 
-                                name=paste(input$describe, "~", input$criteria, "w/ lm"))
+          func <- func %>% e_lm(formula = paste(input$describe, "~", input$criteria))
         }
         
         return(func)
+      }
+      c_group_by_ <- function(e, factor){ # custom group_by function
+        if(factor == "NA"){
+          return(e)
+        } else {
+          return(e %>% 
+                   group_by_(factor)
+          )
+        }
       }
       plot <- function(){ # Plot을 직접 그리는 함수
         switch(
@@ -141,15 +149,15 @@ server <- function(input, output) {
           "scatter" = {
             return(
               data %>%
-                group_by_(input$factor) %>% 
+                c_group_by_(input$factor) %>% 
                 e_charts_(input$criteria) %>%
+                viewScatterDescribe() %>% 
                 e_toolbox_feature (
                   feature = c("saveAsImage")
                 ) %>% 
                 e_axis_labels(x=input$criteria, y=input$describe) %>% 
                 viewAxis("xaxis") %>% 
                 viewAxis("yaxis") %>% 
-                viewScatterDescribe %>% 
                 viewRegression(input$regression)
             )
           },
