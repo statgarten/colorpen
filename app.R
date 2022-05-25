@@ -35,7 +35,8 @@ ui <- fluidPage(
       conditionalPanel(
         condition = "input.criteria == input.describe && input.regression != 'None'",
         tags$p(
-          "Criteria and Describe cannot be same."
+          "Criteria and Describe cannot be same.",
+          style = "color: red;"
         )
       ),
         #selectInput("smoothMethod", "Method",
