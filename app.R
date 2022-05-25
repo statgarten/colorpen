@@ -31,10 +31,15 @@ ui <- fluidPage(
           choices = c("None", "lm", "glm"),
           selected = "None",
           inline = TRUE,
-        ),
+      ),
+      conditionalPanel(
+        condition = "input.criteria == input.describe && input.regression != 'None'",
+        tags$p(
+          "Criteria and Describe cannot be same."
+        )
+      ),
         #selectInput("smoothMethod", "Method",
         #            list("lm", "glm", "gam", "loess", "rlm"))
-      ),
       selectizeInput(
         inputId = "criteria",
         label = "Select Variable for Criteria",
@@ -68,13 +73,15 @@ ui <- fluidPage(
         # 그런데 mode()로 볼때는 character였는데, input$describe[1] 이런식의 호출도 되는 것으로 봐서 또 다른것인지 의문이 듦.
       ),
     ),
+    ),
     mainPanel(
       textOutput("test"), 
       # 처음에 plotOutput으로 충분한지 알았으나, reference 찾고 난 후 eharts4r에 맞는 output이 있다는 것을 알았음.
       # 패키지별로 output이 따로 존재한다고 생각해야 할 것 같음.
       echarts4rOutput("plot"),
     )
-  )
+
+)
 )
 
 server <- function(input, output) {
@@ -127,9 +134,10 @@ server <- function(input, output) {
       }
       viewRegression <- function(e, method){
         func <- e
-        
-        if(method == "lm"){
-          func <- func %>% e_lm(formula = paste(input$describe, "~", input$criteria))
+        if(input$criteria != input$describe){
+          if(method == "lm"){
+            func <- func %>% e_lm(formula = paste(input$describe, "~", input$criteria))
+          }
         }
         
         return(func)
