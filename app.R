@@ -28,7 +28,7 @@ ui <- fluidPage(
         radioButtons(
           inputId="regression",
           label="Method for Regression",
-          choices = c("None", "lm", "glm"),
+          choices = c("None", "lm", "loess"),
           selected = "None",
           inline = TRUE,
       ),
@@ -138,6 +138,8 @@ server <- function(input, output) {
         if(input$criteria != input$describe){
           if(method == "lm"){
             func <- func %>% e_lm(formula = paste(input$describe, "~", input$criteria))
+          } else if(method == "loess") {
+            func <- func %>% e_loess(formula = paste(input$describe, "~", input$criteria))
           }
         }
         
