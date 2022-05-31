@@ -1,10 +1,15 @@
 library(shiny)
-library(echarts4r)
-library(dplyr)
+library(shinyjs)
 library(shinydashboard)
 library(shinydashboardPlus)
+
+library(echarts4r)
+library(tidyverse) # include ggplot2
+library(plotly)
+
+library(dplyr)
 library(DT)
-library(shinyjs)
+
 library(tibble)
 
 originData <- mtcars
@@ -31,6 +36,14 @@ ui <- fluidPage(
           choices = c("None", "lm", "loess"),
           selected = "None",
           inline = TRUE,
+        ),
+        conditionalPanel(
+          condition = "input.factor != 'NA'",
+          checkboxInput(
+            inputId = "overall_regression",
+            label = "Show Overall Line Only",
+            value = FALSE,
+        )
       ),
       conditionalPanel(
         condition = "input.criteria == input.describe && input.regression != 'None'",
@@ -50,7 +63,8 @@ ui <- fluidPage(
       checkboxGroupInput(
         inputId = "options",
         label = "Option for Plot",
-        choices = c("Show X-Axis" = "xaxis", "Show Y-Axis" = "yaxis", "Use Row Name" = "userowname"),
+        choices = c("Show X-Axis" = "xaxis", "Show Y-Axis" = "yaxis", 
+                    "Use Row Name" = "userowname"),
         selected = c("xaxis", "yaxis"),
       ),
       selectizeInput(
@@ -73,16 +87,16 @@ ui <- fluidPage(
         # input$describe의 type은 character인데, 이걸 list나 vector로 변환해도 한번에 처리 는 어려운 것 같음.
         # 그런데 mode()로 볼때는 character였는데, input$describe[1] 이런식의 호출도 되는 것으로 봐서 또 다른것인지 의문이 듦.
       ),
-    ),
+      ),
     ),
     mainPanel(
       textOutput("test"), 
       # 처음에 plotOutput으로 충분한지 알았으나, reference 찾고 난 후 eharts4r에 맞는 output이 있다는 것을 알았음.
       # 패키지별로 output이 따로 존재한다고 생각해야 할 것 같음.
-      echarts4rOutput("plot"),
+      plotlyOutput("plot"),
     )
 
-)
+  )
 )
 
 server <- function(input, output) {
@@ -91,9 +105,11 @@ server <- function(input, output) {
     list(input$criteria, input$describe, input$options, input$plottype)
   })
 
-  output$test <- renderText({ # 테스트용입니다.
-    paste(input$describe, "~", input$criteria)
-  })
+    test <- function() {# 테스트용입니다.
+      output$test <- renderText({
+        "succeed"
+      })
+    }
 
   
   observeEvent(
@@ -102,49 +118,67 @@ server <- function(input, output) {
       output$plot <- renderEcharts4r({
       viewAxis <- function(e, axis){ # X, Y축에 관한 설정을 하는 함수
         func <- e
-        
         func <- func %>% 
-          e_axis_(label = "asdf", axis = c(substr(axis,1,1)), 
+          e_axis_(label = "axis", axis = c(substr(axis,1,1)), 
                   show = (FALSE || (axis %in% input$options)))
         
         return(func)
       }
+      
       viewScatterDescribe <- function(e) { # 1개 이상의 Describe Variable을 사용하여 Plot 그리는 함수
         func <- e
         #for(describe in input$describe){
         #  func <- func %>% e_scatter_(describe)
         #}
-        
         func <- func %>% e_scatter_(input$describe)
 
         return(func)
       }
+      
       viewBarDescribe <- function(e) {
         func <- e
-
         func <- func %>% e_bar_(input$describe)
         
         return(func)
       }
+      
       viewLineDescribe <- function(e) {
         func <- e
-        
         func <- func %>% e_line_(input$describe)
         
         return(func)
       }
+      
+      viewAxis <- function(xaxis, yaxis){
+        return(
+          aes_string(x = xaxis, y = yaxis)
+        )
+      }
+      
+      viewScatter <- function(){
+        return(
+          geom_point()
+        )
+      }
+      
       viewRegression <- function(e, method){
         func <- e
         if(input$criteria != input$describe){
+          if(input$overall_regression == TRUE){
+            test()
+          }
           if(method == "lm"){
-            func <- func %>% e_lm(formula = paste(input$describe, "~", input$criteria))
+            func <- func %>% 
+              e_lm(formula = paste(input$describe, "~", input$criteria))
           } else if(method == "loess") {
-            func <- func %>% e_loess(formula = paste(input$describe, "~", input$criteria))
+            func <- func %>% 
+              e_loess(formula = paste(input$describe, "~", input$criteria))
           }
         }
         
         return(func)
       }
+      
       c_group_by_ <- function(e, factor){ # custom group_by function
         if(factor == "NA"){
           return(e)
@@ -159,17 +193,22 @@ server <- function(input, output) {
           input$plottype,
           "scatter" = {
             return(
-              data %>%
-                c_group_by_(input$factor) %>% 
-                e_charts_(input$criteria) %>%
-                viewScatterDescribe() %>% 
-                e_toolbox_feature (
-                  feature = c("saveAsImage")
-                ) %>% 
-                e_axis_labels(x=input$criteria, y=input$describe) %>% 
-                viewAxis("xaxis") %>% 
-                viewAxis("yaxis") %>% 
-                viewRegression(input$regression)
+              # data %>%
+              #   c_group_by_(input$factor) %>% 
+              #   e_charts_(input$criteria) %>%
+              #   viewScatterDescribe() %>% 
+              #   e_toolbox_feature (
+              #     feature = c("saveAsImage")
+              #   ) %>% 
+              #   e_axis_labels(x=input$criteria, y=input$describe) %>% 
+              #   viewAxis("xaxis") %>% 
+              #   viewAxis("yaxis") %>% 
+              #   viewRegression(input$regression)
+              ggplotly(
+                data %>% 
+                  ggplot(viewAxis(input$criteria, input$describe)) +
+                  viewScatter()
+              )  
             )
           },
           "bar" = {
@@ -189,15 +228,15 @@ server <- function(input, output) {
           "line" = {
             return(
               data %>%
-                group_by_(input$factor) %>% 
-                e_charts_(input$criteria) %>% 
+                group_by_(input$factor) %>%
+                e_charts_(input$criteria) %>%
                 e_toolbox_feature (
                   feature = c("saveAsImage")
-                ) %>% 
-                e_axis_labels(x=input$criteria, y=input$describe) %>% 
-                viewAxis("xaxis") %>% 
-                viewAxis("yaxis") %>% 
-                viewLineDescribe
+                ) %>%
+                e_axis_labels(x=input$criteria, y=input$describe) %>%
+                viewAxis("xaxis") %>%
+                viewAxis("yaxis") %>%
+                viewLineDecribe
             )
           }
         )
