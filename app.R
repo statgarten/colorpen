@@ -45,6 +45,7 @@ ui <- fluidPage(
             value = FALSE,
         )
       ),
+      ),
       conditionalPanel(
         condition = "input.criteria == input.describe && input.regression != 'None'",
         tags$p(
@@ -87,7 +88,6 @@ ui <- fluidPage(
         # input$describe의 type은 character인데, 이걸 list나 vector로 변환해도 한번에 처리 는 어려운 것 같음.
         # 그런데 mode()로 볼때는 character였는데, input$describe[1] 이런식의 호출도 되는 것으로 봐서 또 다른것인지 의문이 듦.
       ),
-      ),
     ),
     mainPanel(
       textOutput("test"), 
@@ -115,7 +115,7 @@ server <- function(input, output) {
   observeEvent(
     updateTrigger(),
     {
-      output$plot <- renderPlotly({ㅣ,
+      output$plot <- renderPlotly({
       viewAxis <- function(e, axis){ # X, Y축에 관한 설정을 하는 함수
         func <- e
         func <- func %>% 
@@ -158,6 +158,12 @@ server <- function(input, output) {
       viewScatter <- function(){
         return(
           geom_point()
+        )
+      }
+      
+      viewBar <- function(){
+        return(
+          geom_bar()
         )
       }
       
@@ -213,16 +219,21 @@ server <- function(input, output) {
           },
           "bar" = {
             return(
-              data %>%
-                group_by_(input$factor) %>% 
-                e_charts_(input$criteria) %>% 
-                e_toolbox_feature (
-                  feature = c("saveAsImage")
-                ) %>% 
-                e_axis_labels(x=input$criteria, y=input$describe) %>% 
-                viewAxis("xaxis") %>% 
-                viewAxis("yaxis") %>% 
-                viewBarDescribe
+              # data %>%
+              #   group_by_(input$factor) %>% 
+              #   e_charts_(input$criteria) %>% 
+              #   e_toolbox_feature (
+              #     feature = c("saveAsImage")
+              #   ) %>% 
+              #   e_axis_labels(x=input$criteria, y=input$describe) %>% 
+              #   viewAxis("xaxis") %>% 
+              #   viewAxis("yaxis") %>% 
+              #   viewBarDescribe
+              ggplotly(
+                data %>% 
+                  ggplot(viewAxis(input$criteria)) +
+                  viewBar()
+              )
             )
           },
           "line" = {
