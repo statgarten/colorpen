@@ -115,7 +115,7 @@ server <- function(input, output) {
   observeEvent(
     updateTrigger(),
     {
-      output$plot <- renderEcharts4r({
+      output$plot <- renderPlotly({ㅣ,
       viewAxis <- function(e, axis){ # X, Y축에 관한 설정을 하는 함수
         func <- e
         func <- func %>% 
