@@ -64,19 +64,25 @@ ui <- fluidPage(
       checkboxGroupInput(
         inputId = "options",
         label = "Option for Plot",
-        choices = c("Show X-Axis" = "xaxis", "Show Y-Axis" = "yaxis", 
-                    "Use Row Name" = "userowname"),
+        choices = c(
+          "Use Row Name" = "userowname", 
+          "Rotate X-Axis Label" = "xlabel", 
+          "Show Legends" = "legend",
+        ),
         selected = c("xaxis", "yaxis"),
       ),
-      selectizeInput(
-        inputId = "describe",
-        label = "Select Variable to Describe",
-        choices = data %>% colnames(),
-        selected = NULL,
-        multiple = FALSE,
-        # 를 넣으면 여러개가 다 그래프에 나와야 하는데, input$describe로는 오류가 남.
-        # input$describe의 type은 character인데, 이걸 list나 vector로 변환해도 한번에 처리 는 어려운 것 같음.
-        # 그런데 mode()로 볼때는 character였는데, input$describe[1] 이런식의 호출도 되는 것으로 봐서 또 다른것인지 의문이 듦.
+      conditionalPanel(
+        condition = "input.plottype == ('scatter' || 'line')",
+        selectizeInput(
+          inputId = "describe",
+          label = "Select Variable to Describe",
+          choices = data %>% colnames(),
+          selected = NULL,
+          multiple = FALSE,
+          # 를 넣으면 여러개가 다 그래프에 나와야 하는데, input$describe로는 오류가 남.
+          # input$describe의 type은 character인데, 이걸 list나 vector로 변환해도 한번에 처리 는 어려운 것 같음.
+          # 그런데 mode()로 볼때는 character였는데, input$describe[1] 이런식의 호출도 되는 것으로 봐서 또 다른것인지 의문이 듦.
+        ),
       ),
       selectizeInput(
         inputId = "factor",
@@ -105,26 +111,14 @@ server <- function(input, output) {
     list(input$criteria, input$describe, input$options, input$plottype)
   })
 
-    test <- function() {# 테스트용입니다.
-      output$test <- renderText({
-        "succeed"
-      })
-    }
-
+  output$test <- renderText({
+    "xlabel" %in% input$options
+  })
   
   observeEvent(
     updateTrigger(),
     {
       output$plot <- renderPlotly({
-      viewAxis <- function(e, axis){ # X, Y축에 관한 설정을 하는 함수
-        func <- e
-        func <- func %>% 
-          e_axis_(label = "axis", axis = c(substr(axis,1,1)), 
-                  show = (FALSE || (axis %in% input$options)))
-        
-        return(func)
-      }
-      
       viewScatterDescribe <- function(e) { # 1개 이상의 Describe Variable을 사용하여 Plot 그리는 함수
         func <- e
         #for(describe in input$describe){
@@ -140,6 +134,14 @@ server <- function(input, output) {
         func <- func %>% e_bar_(input$describe)
         
         return(func)
+      }
+      
+      rotateXGuide <- function() {
+        if("xlabel" %in% input$options) {
+          return(
+            guides(x = guide_axis(angle = 90))
+          )
+        }
       }
       
       viewLineDescribe <- function(e) {
@@ -213,7 +215,8 @@ server <- function(input, output) {
               ggplotly(
                 data %>% 
                   ggplot(viewAxis(input$criteria, input$describe)) +
-                  viewScatter()
+                  viewScatter() + 
+                  rotateXGuide()
               )  
             )
           },
@@ -238,16 +241,16 @@ server <- function(input, output) {
           },
           "line" = {
             return(
-              data %>%
-                group_by_(input$factor) %>%
-                e_charts_(input$criteria) %>%
-                e_toolbox_feature (
-                  feature = c("saveAsImage")
-                ) %>%
-                e_axis_labels(x=input$criteria, y=input$describe) %>%
-                viewAxis("xaxis") %>%
-                viewAxis("yaxis") %>%
-                viewLineDecribe
+              # data %>%
+              #   group_by_(input$factor) %>%
+              #   e_charts_(input$criteria) %>%
+              #   e_toolbox_feature (
+              #     feature = c("saveAsImage")
+              #   ) %>%
+              #   e_axis_labels(x=input$criteria, y=input$describe) %>%
+              #   viewAxis("xaxis") %>%
+              #   viewAxis("yaxis") %>%
+              #   viewLineDecribe
             )
           }
         )
