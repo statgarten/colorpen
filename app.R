@@ -67,7 +67,7 @@ ui <- fluidPage(
         choices = c(
           "Use Row Name" = "userowname", 
           "Rotate X-Axis Label" = "xlabel", 
-          "Show Legends" = "legend",
+          "Show Legends" = "legend"
         ),
         selected = c("xaxis", "yaxis"),
       ),
@@ -112,7 +112,7 @@ server <- function(input, output) {
   })
 
   output$test <- renderText({
-    "xlabel" %in% input$options
+    input$criteria == 'NA'
   })
   
   observeEvent(
@@ -121,9 +121,7 @@ server <- function(input, output) {
       output$plot <- renderPlotly({
       viewScatterDescribe <- function(e) { # 1개 이상의 Describe Variable을 사용하여 Plot 그리는 함수
         func <- e
-        #for(describe in input$describe){
-        #  func <- func %>% e_scatter_(describe)
-        #}
+        
         func <- func %>% e_scatter_(input$describe)
 
         return(func)
@@ -144,6 +142,16 @@ server <- function(input, output) {
         }
       }
       
+      viewFactor <- function() {
+        if(input$factor == "NA"){
+          return(NULL)
+        } else {
+          return(
+            input$factor
+          )
+        }
+      }
+      
       viewLineDescribe <- function(e) {
         func <- e
         func <- func %>% e_line_(input$describe)
@@ -153,7 +161,7 @@ server <- function(input, output) {
       
       viewAxis <- function(xaxis, yaxis){
         return(
-          aes_string(x = xaxis, y = yaxis)
+          aes_string(x = xaxis, y = yaxis, color = viewFactor())
         )
       }
       
