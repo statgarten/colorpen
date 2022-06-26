@@ -20,12 +20,36 @@ ui <- fluidPage(
   titlePanel("plotGen - Plot Genesis"),
   sidebarLayout(
     sidebarPanel(
+      checkboxGroupInput(
+        inputId = "dev",
+        label = "Option for Developing",
+        choices = c(
+          "Criteria is Factor" = "criteria_is_factor", 
+          "Describe is Factor" = "describe_is_factor", 
+          "Single Variable" = "single_variable"
+        ),
+        selected = c("criteria_is_factor", "describe_is_factor"),
+      ),
       selectizeInput(
         inputId = "plottype",
         label = "Select Type of Plot",
-        choices = c("Scatter Plot" = "scatter", 
-                    "Bar Plot" = "bar", 
-                    "Line Plot" = "line"),
+        choices = c("Area Plot(Single)" = "area_single",
+                    "Density Plot(Single)" = "density_single",
+                    "Dot Plot(Single)" = "dot_single",
+                    "Histogram(Single)" = "histogram_single",
+                    "QQ Plot(Single)" = "qq", #이상 Single Variable
+                    "Scatter Plot" = "scatter",
+                    "Point Plot" = "point",
+                    "Quantile Plot" = "quantile",
+                    "Logistic Regression" = "lm", #이상 Both Continuous
+                    "Box Plot" = "box",
+                    "Dot Plot" = "dot",
+                    "Violin Plot" = "violin", #이상 One Continuous One Discrete
+                    "Area Plot" = "area",
+                    "Line Plot" = "line", #이상 Both Continuous
+                    "Count Plot" = "count",
+                    "Jitter Plot" = "jitter" #이상 Both Discrete
+                    ),
         selected = "scatter"
       ),
       conditionalPanel( # Scatter Plot일때
@@ -72,7 +96,8 @@ ui <- fluidPage(
         selected = c("xaxis", "yaxis"),
       ),
       conditionalPanel(
-        condition = "input.plottype == ('scatter' || 'line')",
+        # condition = "input.plottype == ('scatter' || 'line')",
+        condition = TRUE,
         selectizeInput(
           inputId = "describe",
           label = "Select Variable to Describe",
@@ -112,34 +137,16 @@ server <- function(input, output) {
   })
 
   output$test <- renderText({
-    input$criteria == 'NA'
+    "xlabel" %in% input$options
   })
   
   observeEvent(
     updateTrigger(),
     {
       output$plot <- renderPlotly({
-      viewScatterDescribe <- function(e) { # 1개 이상의 Describe Variable을 사용하여 Plot 그리는 함수
-        func <- e
         
-        func <- func %>% e_scatter_(input$describe)
-
-        return(func)
-      }
-      
-      viewBarDescribe <- function(e) {
-        func <- e
-        func <- func %>% e_bar_(input$describe)
-        
-        return(func)
-      }
-      
-      rotateXGuide <- function() {
-        if("xlabel" %in% input$options) {
-          return(
-            guides(x = guide_axis(angle = 90))
-          )
-        }
+      dummy <- function(){
+        return()
       }
       
       viewFactor <- function() {
@@ -152,58 +159,141 @@ server <- function(input, output) {
         }
       }
       
-      viewLineDescribe <- function(e) {
-        func <- e
-        func <- func %>% e_line_(input$describe)
-        
-        return(func)
-      }
-      
-      viewAxis <- function(xaxis, yaxis){
-        return(
-          aes_string(x = xaxis, y = yaxis, color = viewFactor())
-        )
-      }
-      
-      viewScatter <- function(){
-        return(
-          geom_point()
-        )
-      }
-      
-      viewBar <- function(){
-        return(
-          geom_bar()
-        )
-      }
-      
-      viewRegression <- function(e, method){
-        func <- e
-        if(input$criteria != input$describe){
-          if(input$overall_regression == TRUE){
-            test()
+      f_geom <- function(mapping, stat, position){
+      if("single_variable" %in% input$dev){
+        switch(input$plottype,
+          "area_single" = {
+            return(
+              geom_area(stat = "bin")
+            )
+          },
+          "density_single" = {
+            return(
+              geom_density(kernel = "gaussian")
+            )
+          },
+          "dot_single" = {
+            return(
+              geom_dotplot()
+            )
+          },
+          "histogram_single" = {
+            return(
+              geom_histogram()
+            )
+          },
+          "qq" = {
+            return(
+              geom_qq(aes_string(sample = input$criteria))
+            )
           }
-          if(method == "lm"){
-            func <- func %>% 
-              e_lm(formula = paste(input$describe, "~", input$criteria))
-          } else if(method == "loess") {
-            func <- func %>% 
-              e_loess(formula = paste(input$describe, "~", input$criteria))
+        )
+      } else if("describe_is_factor" %in% input$dev){
+          if("criteria_is_factor" %in% input$dev){ #Both Discrete
+            switch(
+              input$plottype,
+              "count" = { #Single Discrete
+                return(
+                  geom_count()
+                )
+              },
+              "jitter" = {
+                return(
+                  geom_jitter()
+                )
+              }
+            )
+          } else { #Describe Discrete Criteria Continuous 
+            switch(
+              input$plottype,
+              
+            )
+          }
+        } else {
+          if("criteria_is_factor" %in% input$dev){ #Describe Continuous Criteria Descrete 
+            switch(
+              input$plottype,
+              
+            )
+          } else { #Both Continuous
+            switch(
+              input$plottype,
+              "point" = {
+                return(
+                  geom_point()
+                )
+              },
+              "quantile" = {
+                return(
+                  geom_quantile()
+                )
+              },
+              "lm" = {
+                return(
+                  geom_smooth(method = lm)
+                )
+              }
+            )
           }
         }
-        
-        return(func)
       }
       
-      c_group_by_ <- function(e, factor){ # custom group_by function
-        if(factor == "NA"){
-          return(e)
+      f_coordinate <- function(){
+        return(
+          dummy()
+        )
+      }
+      
+      f_facet <- function(){
+        return(
+          dummy()
+        )
+      }
+      
+      f_scale <- function(){
+        return(
+          dummy()
+        )
+      }
+      
+      f_theme <- function(){
+        return(
+          dummy()
+        ) 
+      }
+      
+      f_aes <- function(x, y){
+        if("single_variable" %in% input$dev){
+          return(
+            aes_string(x = x)
+          )
         } else {
-          return(e %>% 
-                   group_by_(factor)
+          return(
+            aes_string(x = x, y = y)
           )
         }
       }
+      
+      f_stat <- function(){
+        
+      }
+      
+      f_position <- function(){
+        
+      }
+      
+      plot_new <- function(){
+        ggplotly(
+          data %>% 
+            ggplot(f_aes(x = input$criteria, y = input$describe)) +
+            f_geom(mapping = f_aes(), stat = f_stat(), position = f_position()) +
+            f_coordinate() +
+            f_facet() +
+            f_scale() +
+            f_theme()
+        )
+      }
+      
       plot <- function(){ # Plot을 직접 그리는 함수
         switch(
           input$plottype,
@@ -216,7 +306,7 @@ server <- function(input, output) {
               #   e_toolbox_feature (
               #     feature = c("saveAsImage")
               #   ) %>% 
-              #   e_axis_labels(x=input$criteria, y=input$describe) %>% 
+              #   e_axis_labels(x=input$criteria, y=input$describe) %>% ㅡㅔㄴㄴㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁ
               #   viewAxis("xaxis") %>% 
               #   viewAxis("yaxis") %>% 
               #   viewRegression(input$regression)
@@ -263,7 +353,7 @@ server <- function(input, output) {
           }
         )
       }
-      plot()
+      plot_new()
         # e_charts(input$criteria)로는 오류 발생. e_charts_로만 가능한데 이 이유를 찾아보아야 함.
         # e_charts 랑 e_charts_ 는 파라미터를 names로 보느냐 character로 받느냐의 차이.
         # 현재 두개 입력시 그래프가 나타나지 않는데, 두개 입력되었을 경우 %>% e_charts(input$describe[2])를 추가할 수 있는 방법이 있을까요?
