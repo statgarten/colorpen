@@ -1,0 +1,13 @@
+name: plotGen
+title: plotGen
+username:
+account: limcw
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6560188
+bundleId: 6049027
+url: https://limcw.shinyapps.io/plotGen/
+when: 1656383900.80168
+lastSyncTime: 1656383900.80169
+asMultiple: FALSE
+asStatic: FALSE

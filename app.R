@@ -2,15 +2,14 @@ library(shiny)
 library(shinyjs)
 library(shinydashboard)
 library(shinydashboardPlus)
-
 library(echarts4r)
 library(tidyverse) # include ggplot2
 library(plotly)
-
 library(dplyr)
 library(DT)
-
 library(tibble)
+
+source(c("f_ggplot.R"))
 
 originData <- mtcars
 
@@ -24,8 +23,8 @@ ui <- fluidPage(
         inputId = "dev",
         label = "Option for Developing",
         choices = c(
-          "Criteria is Factor" = "criteria_is_factor", 
-          "Describe is Factor" = "describe_is_factor", 
+          "Criteria is Factor" = "criteria_is_factor",
+          "Describe is Factor" = "describe_is_factor",
           "Single Variable" = "single_variable"
         ),
         selected = c("criteria_is_factor", "describe_is_factor"),
@@ -49,7 +48,7 @@ ui <- fluidPage(
                     "Line Plot" = "line", #이상 Both Continuous
                     "Count Plot" = "count",
                     "Jitter Plot" = "jitter" #이상 Both Discrete
-                    ),
+        ),
         selected = "scatter"
       ),
       conditionalPanel( # Scatter Plot일때
@@ -67,8 +66,8 @@ ui <- fluidPage(
             inputId = "overall_regression",
             label = "Show Overall Line Only",
             value = FALSE,
-        )
-      ),
+          )
+        ),
       ),
       conditionalPanel(
         condition = "input.criteria == input.describe && input.regression != 'None'",
@@ -77,23 +76,31 @@ ui <- fluidPage(
           style = "color: red;"
         )
       ),
-        #selectInput("smoothMethod", "Method",
-        #            list("lm", "glm", "gam", "loess", "rlm"))
+      #selectInput("smoothMethod", "Method",
+      #            list("lm", "glm", "gam", "loess", "rlm"))
       selectizeInput(
         inputId = "criteria",
         label = "Select Variable for Criteria",
         choices = data %>% colnames(),
         selected = NULL
       ),
+      selectizeInput(
+        inputId = "position",
+        label = "Select Position for Plot",
+        choices = c("dodge", "identity", "jitterdodge", "jitter", "nudge", "stack"),
+        selected = NULL
+      ),
       checkboxGroupInput(
         inputId = "options",
         label = "Option for Plot",
         choices = c(
-          "Use Row Name" = "userowname", 
-          "Rotate X-Axis Label" = "xlabel", 
-          "Show Legends" = "legend"
+          "Use Row Name" = "userowname",
+          "Rotate X-Axis Label" = "xlabel",
+          "Show Legends" = "legend",
+          "X scale to log10" = "xlog10",
+          "X scale to SQRT" = "xsqrt"
         ),
-        selected = c("xaxis", "yaxis"),
+        selected = NULL,
       ),
       conditionalPanel(
         # condition = "input.plottype == ('scatter' || 'line')",
@@ -121,7 +128,7 @@ ui <- fluidPage(
       ),
     ),
     mainPanel(
-      textOutput("test"), 
+      textOutput("test"),
       # 처음에 plotOutput으로 충분한지 알았으나, reference 찾고 난 후 eharts4r에 맞는 output이 있다는 것을 알았음.
       # 패키지별로 output이 따로 존재한다고 생각해야 할 것 같음.
       plotlyOutput("plot"),
@@ -131,233 +138,174 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
-  
+
   updateTrigger <- reactive({ # Plot이 Update되는 조건 지정
     list(input$criteria, input$describe, input$options, input$plottype)
   })
 
   output$test <- renderText({
-    "xlabel" %in% input$options
+    "xsqrt" %in% input$options
   })
-  
+
   observeEvent(
     updateTrigger(),
     {
       output$plot <- renderPlotly({
-        
-      dummy <- function(){
-        return()
-      }
-      
-      viewFactor <- function() {
-        if(input$factor == "NA"){
+
+        dummy <- function(){
           return(NULL)
-        } else {
-          return(
-            input$factor
-          )
         }
-      }
-      
-      f_geom <- function(mapping, stat, position){
-      if("single_variable" %in% input$dev){
-        switch(input$plottype,
-          "area_single" = {
+
+        viewFactor <- function() {
+          if(input$factor == "NA"){
+            return(NULL)
+          } else {
             return(
-              geom_area(stat = "bin")
-            )
-          },
-          "density_single" = {
-            return(
-              geom_density(kernel = "gaussian")
-            )
-          },
-          "dot_single" = {
-            return(
-              geom_dotplot()
-            )
-          },
-          "histogram_single" = {
-            return(
-              geom_histogram()
-            )
-          },
-          "qq" = {
-            return(
-              geom_qq(aes_string(sample = input$criteria))
-            )
-          }
-        )
-      } else if("describe_is_factor" %in% input$dev){
-          if("criteria_is_factor" %in% input$dev){ #Both Discrete
-            switch(
-              input$plottype,
-              "count" = { #Single Discrete
-                return(
-                  geom_count()
-                )
-              },
-              "jitter" = {
-                return(
-                  geom_jitter()
-                )
-              }
-            )
-          } else { #Describe Discrete Criteria Continuous 
-            switch(
-              input$plottype,
-              
-            )
-          }
-        } else {
-          if("criteria_is_factor" %in% input$dev){ #Describe Continuous Criteria Descrete 
-            switch(
-              input$plottype,
-              
-            )
-          } else { #Both Continuous
-            switch(
-              input$plottype,
-              "point" = {
-                return(
-                  geom_point()
-                )
-              },
-              "quantile" = {
-                return(
-                  geom_quantile()
-                )
-              },
-              "lm" = {
-                return(
-                  geom_smooth(method = lm)
-                )
-              }
+              input$factor
             )
           }
         }
-      }
-      
-      f_coordinate <- function(){
-        return(
-          dummy()
-        )
-      }
-      
-      f_facet <- function(){
-        return(
-          dummy()
-        )
-      }
-      
-      f_scale <- function(){
-        return(
-          dummy()
-        )
-      }
-      
-      f_theme <- function(){
-        return(
-          dummy()
-        ) 
-      }
-      
-      f_aes <- function(x, y){
-        if("single_variable" %in% input$dev){
-          return(
-            aes_string(x = x)
-          )
-        } else {
-          return(
-            aes_string(x = x, y = y)
-          )
-        }
-      }
-      
-      f_stat <- function(){
-        
-      }
-      
-      f_position <- function(){
-        
-      }
-      
-      plot_new <- function(){
-        ggplotly(
-          data %>% 
-            ggplot(f_aes(x = input$criteria, y = input$describe)) +
-            f_geom(mapping = f_aes(), stat = f_stat(), position = f_position()) +
-            f_coordinate() +
-            f_facet() +
-            f_scale() +
-            f_theme()
-        )
-      }
-      
-      plot <- function(){ # Plot을 직접 그리는 함수
-        switch(
-          input$plottype,
-          "scatter" = {
-            return(
-              # data %>%
-              #   c_group_by_(input$factor) %>% 
-              #   e_charts_(input$criteria) %>%
-              #   viewScatterDescribe() %>% 
-              #   e_toolbox_feature (
-              #     feature = c("saveAsImage")
-              #   ) %>% 
-              #   e_axis_labels(x=input$criteria, y=input$describe) %>% ㅡㅔㄴㄴㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㄹㅁ
-              #   viewAxis("xaxis") %>% 
-              #   viewAxis("yaxis") %>% 
-              #   viewRegression(input$regression)
-              ggplotly(
-                data %>% 
-                  ggplot(viewAxis(input$criteria, input$describe)) +
-                  viewScatter() + 
-                  rotateXGuide()
-              )  
+
+        f_geom <- function(mapping, stat, position){
+          if("single_variable" %in% input$dev){
+            switch(input$plottype,
+                   "area_single" = {
+                     return(
+                       geom_area(stat = "bin")
+                     )
+                   },
+                   "density_single" = {
+                     return(
+                       geom_density(kernel = "gaussian")
+                     )
+                   },
+                   "dot_single" = {
+                     return(
+                       geom_dotplot()
+                     )
+                   },
+                   "histogram_single" = {
+                     return(
+                       geom_histogram()
+                     )
+                   },
+                   "qq" = {
+                     return(
+                       geom_qq(aes_string(sample = input$criteria))
+                     )
+                   }
             )
-          },
-          "bar" = {
-            return(
-              # data %>%
-              #   group_by_(input$factor) %>% 
-              #   e_charts_(input$criteria) %>% 
-              #   e_toolbox_feature (
-              #     feature = c("saveAsImage")
-              #   ) %>% 
-              #   e_axis_labels(x=input$criteria, y=input$describe) %>% 
-              #   viewAxis("xaxis") %>% 
-              #   viewAxis("yaxis") %>% 
-              #   viewBarDescribe
-              ggplotly(
-                data %>% 
-                  ggplot(viewAxis(input$criteria)) +
-                  viewBar()
+          } else if("describe_is_factor" %in% input$dev){
+            if("criteria_is_factor" %in% input$dev){ #Both Discrete
+              switch(
+                input$plottype,
+                "count" = { #Single Discrete
+                  return(
+                    geom_count()
+                  )
+                },
+                "jitter" = {
+                  return(
+                    geom_jitter()
+                  )
+                }
               )
-            )
-          },
-          "line" = {
+            } else { #Describe Discrete Criteria Continuous
+              switch(
+                input$plottype,
+
+              )
+            }
+          } else {
+            if("criteria_is_factor" %in% input$dev){ #Describe Continuous Criteria Descrete
+              switch(
+                input$plottype,
+
+              )
+            } else { #Both Continuous
+              switch(
+                input$plottype,
+                "point" = {
+                  return(
+                    geom_point()
+                  )
+                },
+                "quantile" = {
+                  return(
+                    geom_quantile()
+                  )
+                },
+                "lm" = {
+                  return(
+                    geom_smooth(method = lm)
+                  )
+                }
+              )
+            }
+          }
+        }
+
+        f_coordinate <- function(){
+          return(
+            dummy()
+          )
+        }
+
+        f_facet <- function(){
+          return(
+            dummy()
+          )
+        }
+
+        f_scale <- function(){
+          scale <- NULL
+          if("xlog10" %in% input$options){
+            scale <- scale + scale_x_log10()
+          }
+          if("xsqrt" %in% input$options){
+            scale <- scale + scale_x_sqrt()
+          }
+          return(
+            scale
+          )
+        }
+
+        f_theme <- function(){
+          return(
+            dummy()
+          )
+        }
+
+        f_aes <- function(x, y){
+          if("single_variable" %in% input$dev){
             return(
-              # data %>%
-              #   group_by_(input$factor) %>%
-              #   e_charts_(input$criteria) %>%
-              #   e_toolbox_feature (
-              #     feature = c("saveAsImage")
-              #   ) %>%
-              #   e_axis_labels(x=input$criteria, y=input$describe) %>%
-              #   viewAxis("xaxis") %>%
-              #   viewAxis("yaxis") %>%
-              #   viewLineDecribe
+              aes_string(x = x)
+            )
+          } else {
+            return(
+              aes_string(x = x, y = y)
             )
           }
-        )
-      }
-      plot_new()
-        # e_charts(input$criteria)로는 오류 발생. e_charts_로만 가능한데 이 이유를 찾아보아야 함.
-        # e_charts 랑 e_charts_ 는 파라미터를 names로 보느냐 character로 받느냐의 차이.
-        # 현재 두개 입력시 그래프가 나타나지 않는데, 두개 입력되었을 경우 %>% e_charts(input$describe[2])를 추가할 수 있는 방법이 있을까요?
-    })
+        }
+
+        f_position <- function(){
+
+        }
+
+        plot <- function(){
+          ggplotly(
+            data %>%
+              ggplot(f_aes(x = input$criteria, y = input$describe)) +
+              f_geom(mapping = f_aes(), stat = f_stat(), position = f_position()) +
+              f_coordinate() +
+              f_facet() +
+              f_scale() +
+              f_theme()
+          )
+        }
+
+        plot()
+      })
     }
   )
 }
