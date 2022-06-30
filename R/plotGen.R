@@ -1,5 +1,8 @@
 #' @export
-#' @import shiny, dplyr, tidyverse, DT, plotly
+#' @import shiny
+#' @import dplyr
+#' @import tidyverse
+#' @import plotly
 #'
 
 plotGen <- function(data, criteria, description = NULL){
@@ -23,8 +26,8 @@ plotGen <- function(data, criteria, description = NULL){
   }
 
   g <-data %>%
-      ggplot(f_aes(x = criteria, y = description)) +
-      geom_point()
+        ggplot(f_aes(x = criteria, y = description)) +
+        geom_point()
 
   return(g)
 }
