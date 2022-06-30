@@ -9,11 +9,12 @@ library(dplyr)
 library(DT)
 library(tibble)
 
-source(c("f_ggplot.R"))
+source("R/detectFactor.R")
+source("R/convertFactor.R")
 
 originData <- mtcars
 
-data <- originData %>% as.data.frame()
+data <- originData %>% as.data.frame() %>% convertFactor()
 
 ui <- fluidPage(
   titlePanel("plotGen - Plot Genesis"),
@@ -157,14 +158,14 @@ server <- function(input, output) {
         }
 
         viewFactor <- function() {
-          if(input$factor == "NA"){
+          if(input$factor == "NA") {
             return(NULL)
-          } else {
-            return(
-              input$factor
-            )
+          } else  {
+              return(
+                input$factor
+              )
+            }
           }
-        }
 
         f_geom <- function(mapping, stat, position){
           if("single_variable" %in% input$dev){
@@ -278,13 +279,17 @@ server <- function(input, output) {
         }
 
         f_aes <- function(x, y){
+          colour <- NULL
+          if(input$criteria != 'NA') {
+            colour <- input$criteria
+          }
           if("single_variable" %in% input$dev){
             return(
-              aes_string(x = x)
+              aes_string(x = x, colour = colour)
             )
           } else {
             return(
-              aes_string(x = x, y = y)
+              aes_string(x = x, y = y, colour = colour)
             )
           }
         }
