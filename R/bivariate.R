@@ -1,6 +1,6 @@
 #' @export
 
-bivariate <- function(type){
+bivariate <- function(type, vartypeX, vartypeY){
   switch(
     type,
     "scatter" = {
@@ -11,6 +11,6 @@ bivariate <- function(type){
     },
     "jitter" = {
       return(geom_jitter())
-    }
+    },
   )
 }

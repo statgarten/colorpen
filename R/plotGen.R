@@ -12,7 +12,7 @@
 #'
 
 plotGen <- function(data, type, criteria, describe = NULL, options = NULL){
-  data <- data %>% as.data.frame() %>% convertFactor() #Dataframe 형식으로 변환
+  data <- data %>% as.data.frame() %>% convertFactor() #Dataframe 형식으로 변환; Factor 형식으로 변환
 
   f_aes <- function(x, y = NULL){
     colour <- NULL
@@ -41,11 +41,15 @@ plotGen <- function(data, type, criteria, describe = NULL, options = NULL){
   f_geom <- function(type){
     univariate <- c("histogram")
     bivariate <- c("scatter", "line", "jitter")
+    indexX <- which(data %>% colnames == criteria)
+    indexY <- which(data %>% colnames == describe)
+    vartypeX <- detectFactor(data)[indexX]
+    vartypeY <- detectFactor(data)[indexY]
 
-    if(type %in% univariate) {
-      return(univariate(type))
+    if(is.na(describe) & type %in% univariate) {
+      return(univariate(type, vartypeX))
     } else if (type %in% bivariate) {
-      return(bivariate(type))
+      return(bivariate(type, vartypeX, vartypeY))
     }
   }
 
