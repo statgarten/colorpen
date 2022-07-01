@@ -14,8 +14,13 @@
 plotGen <- function(data, type, criteria, describe = NULL, options){
   data <- data %>% as.data.frame() %>% convertFactor() #Dataframe 형식으로 변환
 
-  f_aes <- function(x, y){
+  f_aes <- function(x, y = NULL){
     colour <- NULL
+    if(is.null(y)){
+      return(
+        aes_string(x = x)
+      )
+    }
     if(x != 'NA') {
       colour <- x
     }
