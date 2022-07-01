@@ -9,9 +9,10 @@
 #'@param criteria X-axis variable in data
 #'@param describe Y-axis variable in data
 #'@param options Additional Options
+#'
 
 plotGen <- function(data, type, criteria, describe = NULL, options){
-  data <- data %>% as.data.frame()
+  data <- data %>% as.data.frame() %>% convertFactor() #Dataframe 형식으로 변환
 
   f_aes <- function(x, y){
     colour <- NULL
@@ -32,14 +33,21 @@ plotGen <- function(data, type, criteria, describe = NULL, options){
     )
   }
 
-  f_geom <- function(){
+  f_geom <- function(type){
+    univariate <- c("histogram")
+    bivariate <- c("scatter", "line", "jitter")
 
+    if(type %in% univariate) {
+      return(univariate(type))
+    } else if (type %in% bivariate) {
+      return(bivariate(type))
+    }
   }
 
   g <- data %>%
     ggplot(f_aes(x = criteria, y = describe)) +
-    geom_point()
-
+    f_geom(type)
 
   return(g)
 }
+
