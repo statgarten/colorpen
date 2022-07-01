@@ -11,7 +11,7 @@
 #'@param options Additional Options
 #'
 
-plotGen <- function(data, type, criteria, describe = NULL, options){
+plotGen <- function(data, type, criteria, describe = NULL, options = NULL){
   data <- data %>% as.data.frame() %>% convertFactor() #Dataframe 형식으로 변환
 
   f_aes <- function(x, y = NULL){
@@ -49,9 +49,10 @@ plotGen <- function(data, type, criteria, describe = NULL, options){
     }
   }
 
-  g <- data %>%
+  g <- (data %>%
     ggplot(f_aes(x = criteria, y = describe)) +
-    f_geom(type)
+    f_geom(type)) %>%
+    f_options(options)
 
   return(g)
 }

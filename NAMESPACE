@@ -3,6 +3,7 @@
 export(bivariate)
 export(convertFactor)
 export(detectFactor)
+export(f_options)
 export(plotGen)
 export(univariate)
 import(dplyr)
