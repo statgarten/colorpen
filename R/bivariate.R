@@ -1,8 +1,7 @@
 #' @export
 
-bivariate <- function(type, vartypeX, vartypeY){
-  switch(
-    type,
+bivariate <- function(type, vartypeX, vartypeY) {
+  switch(type,
     "scatter" = {
       return(geom_point())
     },

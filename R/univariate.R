@@ -1,10 +1,9 @@
 #' @export
 
-univariate <- function(type, vartypeX){
-  switch(
-    type,
+univariate <- function(type, vartypeX) {
+  switch(type,
     "histogram" = {
-      return(geom_histogram()) #binwidth 넣을 필요 있을수도
+      return(geom_histogram()) # binwidth 넣을 필요 있을수도
     },
     "area" = {
       return(geom_area(stat = "bin"))
