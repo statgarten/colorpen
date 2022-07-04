@@ -4,56 +4,57 @@
 #' @import tidyverse
 #' @import plotly
 #'
-#'@param data Data to describe in graph
-#'@param type Type of graph
-#'@param criteria X-axis variable in data
-#'@param describe Y-axis variable in data
-#'@param options Additional Options
+#' @param data Data to describe in graph
+#' @param type Type of graph
+#' @param criteria X-axis variable in data
+#' @param describe Y-axis variable in data
+#' @param options Additional Options
+#' @return A `plotly` graph.
 #'
 
-plotGen <- function(data, type, criteria, describe = NULL, options = NULL){
-  data <- data %>% as.data.frame() %>% convertFactor() #Dataframe 형식으로 변환
+plotGen <- function(data, type, criteria, describe = NULL, options = NULL, wraptype = NULL, wrapcols = NULL, wraprows = NULL) {
+  data <- data %>%
+    as.data.frame() %>%
+    convertFactor() # Dataframe 형식으로 변환; Factor 형식으로 변환
 
-  f_aes <- function(x, y = NULL){
-    colour <- NULL
-    if(is.null(y)){
+  exception <- c("pie", "donut")
+
+  if (type %in% exception) {
+    return(f_plot_ly(data, type, criteria, describe, options, wraptype, wrapcols, wraprows))
+  }
+
+  f_aes <- function(x, y = NULL) {
+    if (type == "pie") {
+      count <-
+        return(aes_string(x = "", y = criteria, fill = criteria))
+    }
+    if (is.null(y)) {
       return(
         aes_string(x = x)
       )
     }
-    if(x != 'NA') {
-      colour <- x
-    }
-    # if("single_variable" %in% input$dev){
-    #   return(
-    #     aes_string(x = x, colour = colour)
-    #   )
-    # } else {
-    #   return(
-    #     aes_string(x = x, y = y, colour = colour)
-    #   )
-    # }
     return(
       aes_string(x = x, y = y)
     )
   }
 
-  f_geom <- function(type){
-    univariate <- c("histogram")
-    bivariate <- c("scatter", "line", "jitter")
+  f_geom <- function(type) {
+    indexX <- which(data %>% colnames() == criteria)
+    indexY <- which(data %>% colnames() == describe)
+    vartypeX <- detectFactor(data)[indexX]
+    vartypeY <- detectFactor(data)[indexY]
 
-    if(type %in% univariate) {
-      return(univariate(type))
-    } else if (type %in% bivariate) {
-      return(bivariate(type))
+    if (is.null(describe)) {
+      return(univariate(type, vartypeX))
+    } else {
+      return(bivariate(type, vartypeX, vartypeY))
     }
   }
 
-  g <- (data %>%
+  g <- ggplotly((data %>%
     ggplot(f_aes(x = criteria, y = describe)) +
     f_geom(type)) %>%
-    f_options(options)
+    f_options(options) + f_wrap(wraptype, wrapcols, wraprows))
 
   return(g)
 }
-
