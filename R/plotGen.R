@@ -17,41 +17,36 @@ plotGen <- function(data, type, criteria, describe = NULL, options = NULL, wrapt
     as.data.frame() %>%
     convertFactor() # Dataframe 형식으로 변환; Factor 형식으로 변환
 
+  exception <- c("pie", "donut")
+
+  if (type %in% exception) {
+    return(f_plot_ly(data, type, criteria, describe, options, wraptype, wrapcols, wraprows))
+  }
+
   f_aes <- function(x, y = NULL) {
-    colour <- NULL
+    if (type == "pie") {
+      count <-
+        return(aes_string(x = "", y = criteria, fill = criteria))
+    }
     if (is.null(y)) {
       return(
         aes_string(x = x)
       )
     }
-    if (x != "NA") {
-      colour <- x
-    }
-    # if("single_variable" %in% input$dev){
-    #   return(
-    #     aes_string(x = x, colour = colour)
-    #   )
-    # } else {
-    #   return(
-    #     aes_string(x = x, y = y, colour = colour)
-    #   )
-    # }
     return(
       aes_string(x = x, y = y)
     )
   }
 
   f_geom <- function(type) {
-    univariate <- c("histogram")
-    bivariate <- c("scatter", "line", "jitter")
     indexX <- which(data %>% colnames() == criteria)
     indexY <- which(data %>% colnames() == describe)
     vartypeX <- detectFactor(data)[indexX]
     vartypeY <- detectFactor(data)[indexY]
 
-    if (is.na(describe) & type %in% univariate) {
+    if (is.null(describe)) {
       return(univariate(type, vartypeX))
-    } else if (type %in% bivariate) {
+    } else {
       return(bivariate(type, vartypeX, vartypeY))
     }
   }

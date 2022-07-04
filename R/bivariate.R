@@ -1,7 +1,9 @@
 #' @export
-
+#' @import cli
 bivariate <- function(type, vartypeX, vartypeY) {
+  cli_alert_success("bivariate type: {type} vartypeX: {vartypeX} vartypeY: {vartypeY}")
   if (vartypeX == "Factor" & vartypeY == "Factor") {
+    cli_alert_success("X: Factor Y: Factor")
     switch(type,
       "count" = {
         return(geom_count())
@@ -9,8 +11,12 @@ bivariate <- function(type, vartypeX, vartypeY) {
       "jitter" = {
         return(geom_jitter())
       },
+      "heatmap" = {
+        return(geom_tile())
+      }
     )
   } else if (vartypeX == "Factor" & vartypeY == "Continuous") {
+    cli_alert_success("X: Factor Y: Continuous")
     switch(type,
       "col" = {
         return(geom_col())
@@ -18,7 +24,7 @@ bivariate <- function(type, vartypeX, vartypeY) {
       "box" = {
         return(geom_boxplot())
       },
-      "dot" = {
+      "dot" = { # Error in `check_required_aesthetics()`:! geom_dotplot requires the following missing aesthetics: y
         return(geom_dotplot())
       },
       "violin" = {
@@ -26,8 +32,9 @@ bivariate <- function(type, vartypeX, vartypeY) {
       },
     )
   } else if (vartypeX == "Continuous" & vartypeY == "Factor") {
-
-  } else {
+    cli_alert_success("X: Continuous Y: Factor")
+  } else { # 모두 Continuous #success
+    cli_alert_success("X: Continuous Y: Continuous")
     switch(type,
       "scatter" = {
         return(geom_point())

@@ -2,7 +2,7 @@
 #'
 
 f_wrap <- function(type, cols, rows) {
-  if(is.null(cols) & is.null(rows)){
+  if (is.null(cols) & is.null(rows)) {
     return()
   }
   switch(type,
