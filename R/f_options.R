@@ -38,8 +38,5 @@ f_options <- function(g, options) {
     g <- g + theme_light()
   }
 
-
-
-
   return(g)
 }

@@ -1,4 +1,5 @@
 #' @export
+#' @return A vector including whether column is Discrete or Continuous variable.
 
 detectFactor <- function(data) {
   return(

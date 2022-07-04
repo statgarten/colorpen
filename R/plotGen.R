@@ -9,9 +9,10 @@
 #' @param criteria X-axis variable in data
 #' @param describe Y-axis variable in data
 #' @param options Additional Options
+#' @return A `plotly` graph.
 #'
 
-plotGen <- function(data, type, criteria, describe = NULL, options = NULL) {
+plotGen <- function(data, type, criteria, describe = NULL, options = NULL, wraptype = NULL, wrapcols = NULL, wraprows = NULL) {
   data <- data %>%
     as.data.frame() %>%
     convertFactor() # Dataframe 형식으로 변환; Factor 형식으로 변환
@@ -58,7 +59,7 @@ plotGen <- function(data, type, criteria, describe = NULL, options = NULL) {
   g <- ggplotly((data %>%
     ggplot(f_aes(x = criteria, y = describe)) +
     f_geom(type)) %>%
-    f_options(options))
+    f_options(options) + f_wrap(wraptype, wrapcols, wraprows))
 
   return(g)
 }
