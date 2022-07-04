@@ -26,16 +26,16 @@ f_options <- function(g, options) {
     g <- g + theme_bw()
   }
   if ("ThemeGray" %in% options) {
-    g <- g + theme_bw()
+    g <- g + theme_gray()
   }
   if ("ThemeDark" %in% options) {
-    g <- g + theme_bw()
+    g <- g + theme_dark()
   }
   if ("ThemeClassic" %in% options) {
-    g <- g + theme_bw()
+    g <- g + theme_classic()
   }
   if ("ThemeLight" %in% options) {
-    g <- g + theme_bw()
+    g <- g + theme_light()
   }
 
 

@@ -55,10 +55,10 @@ plotGen <- function(data, type, criteria, describe = NULL, options = NULL) {
     }
   }
 
-  g <- (data %>%
+  g <- ggplotly((data %>%
     ggplot(f_aes(x = criteria, y = describe)) +
     f_geom(type)) %>%
-    f_options(options)
+    f_options(options))
 
   return(g)
 }
