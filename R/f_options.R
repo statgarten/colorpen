@@ -1,12 +1,45 @@
 #' @export
 
-f_options <- function(g, options){
-  if("scaleToLog10" %in% options){
+f_options <- function(g, options) {
+  # Scale options
+  if ("XScaleToLog10" %in% options) {
     g <- g + scale_x_log10()
   }
-  if("scaleToSqrt" %in% options){
+  if ("XScaleToSqrt" %in% options) {
     g <- g + scale_x_sqrt()
   }
+  if ("XScaleReverse" %in% options) {
+    g <- g + scale_x_reverse()
+  }
+  if ("YScaleToLog10" %in% options) {
+    g <- g + scale_y_log10()
+  }
+  if ("YScaleToSqrt" %in% options) {
+    g <- g + scale_y_sqrt()
+  }
+  if ("YScaleReverse" %in% options) {
+    g <- g + scale_y_reverse()
+  }
+
+  # Theme options
+  if ("ThemeBW" %in% options) {
+    g <- g + theme_bw()
+  }
+  if ("ThemeGray" %in% options) {
+    g <- g + theme_bw()
+  }
+  if ("ThemeDark" %in% options) {
+    g <- g + theme_bw()
+  }
+  if ("ThemeClassic" %in% options) {
+    g <- g + theme_bw()
+  }
+  if ("ThemeLight" %in% options) {
+    g <- g + theme_bw()
+  }
+
+
+
 
   return(g)
 }
