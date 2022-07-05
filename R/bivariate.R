@@ -1,5 +1,15 @@
 #' @export
 #' @import cli
+#'
+#' @param type Type of graph
+#' @param vartypeX Type of X(criteria)
+#' @param vartypeY Type of Y(describe)
+#' @return The `ggplot2` geom_*() function.
+#' @examples
+#' bivariate("count", "cyl", "am")
+#' bivariate("box", "cyl", "mpg")
+#' bivariate("dot", "mpg", "cyl")
+#' bivariate("scatter", "mpg", "wt")
 bivariate <- function(type, vartypeX, vartypeY) {
   cli_alert_success("bivariate type: {type} vartypeX: {vartypeX} vartypeY: {vartypeY}")
   if (vartypeX == "Factor" & vartypeY == "Factor") {

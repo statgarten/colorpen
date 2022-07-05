@@ -3,13 +3,19 @@
 #' @import dplyr
 #' @import tidyverse
 #' @import plotly
-#'
 #' @param data Data to describe in graph
 #' @param type Type of graph
 #' @param criteria X-axis variable in data
 #' @param describe Y-axis variable in data
 #' @param options Additional Options
+#' @param wraptype Passed to f_wrap()
+#' @param wrapcols Passed to f_wrap()
+#' @param wraprows Passed to f_wrap()
 #' @return A `plotly` graph.
+#' @examples
+#' plotGen(mtcars, "count", "cyl", "am", c("XScaleToLog10", "YScaleToSqrt))
+#' plotGen(mtcars, "histogram", "cyl", describe = NULL, c("Theme_BW"))
+#' plotGen(mtcars, "scatter", "mpg", "wt", options = NULL, wraptype = "grid", wrapcols = "cyl")
 #'
 
 plotGen <- function(data, type, criteria, describe = NULL, options = NULL, wraptype = NULL, wrapcols = NULL, wraprows = NULL) {
@@ -53,8 +59,9 @@ plotGen <- function(data, type, criteria, describe = NULL, options = NULL, wrapt
 
   g <- ggplotly((data %>%
     ggplot(f_aes(x = criteria, y = describe)) +
-    f_geom(type)) %>%
-    f_options(options) + f_wrap(wraptype, wrapcols, wraprows))
+      f_geom(type) +
+      f_wrap(wraptype, wrapcols, wraprows)) %>%
+      f_options(options))
 
   return(g)
 }

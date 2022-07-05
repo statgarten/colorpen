@@ -1,0 +1,33 @@
+---
+title: "plotGen"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{plotGen}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## How to use this package?
+This package is made for [Statgarten](https://github.com/statgarten), which is a solution for easy statistical analysis.
+This package uses `ggplot()` mainly, and `plot_ly()` as supplementary.
+This package returns an interactive ggplot graph, using `ggplotly()`.
+There is some plots not supported by `ggplotly()`. For example, in ggplot2, there is no geom function for pie chart or donut chart.
+You need to use polar coordination to draw those circular chart. However, `ggplotly()` does not support ploar coordination yet.
+This package uses `plot_ly()` to draw plots not supported by `ggplotly()`. You should be careful of it.
+
+Here is a example,
+
+```{r setup}
+library(plotGen)
+library(ggplot2)
+plotGen(mtcars, "scatter", "mpg", "wt", options = c("XScaleToLog10", "YScaleToSqrt", "Theme_BW"), wraptype = "grid", wrapcols = "cyl")
+```
+
+You can generate a ggplot2 plot in one line.

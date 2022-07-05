@@ -21,7 +21,9 @@ f_options <- function(g, options) {
     g <- g + scale_y_reverse()
   }
 
-  # Theme options
+
+
+  # Theme options Theme should be the last.
   if ("ThemeBW" %in% options) {
     g <- g + theme_bw()
   }
