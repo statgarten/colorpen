@@ -1,4 +1,4 @@
-# plotGen
+# plotGen(Deprecated)
 
 example : 
 ```{r}
