@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^colorpen\.Rproj$
 ^LICENSE\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
