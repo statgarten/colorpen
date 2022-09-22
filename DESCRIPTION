@@ -2,8 +2,8 @@ Package: colorpen
 Title: Data visualize shiny module
 Version: 0.0.1
 Authors@R: c(
-    person("Changwoo", "Lim", , "limcw@zarathu.com", role = c("aut", "cre")),
-    person("Jinhwan", "Kim", , "hwanistic@gmail.com", role = c("aut"))
+    person("Changwoo", "Lim", , "limcw@zarathu.com", role = c("aut")),
+    person("Jinhwan", "Kim", , "hwanistic@gmail.com", role = c("aut", "cre"))
   )
 Description: Provides data visualize functions while gets prarmeter as text input.
 License: MIT + file LICENSE
@@ -12,3 +12,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Suggests: 
     rmarkdown
+URL: https://github.com/statgarten/colorpen
