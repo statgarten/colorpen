@@ -23,7 +23,7 @@ library(colorpen)
 
 ## :blush: Authors
 * :octocat: Jinhwan Kim [@jhk0530](https://github.com/jhk0530)
-* :octocat: Changwii Lim [@changwoolim](https://github.com/changwoolim)
+* :octocat: Changwoo Lim [@changwoolim](https://github.com/changwoolim)
 
 ## :memo: License
 Copyright :copyright: 2022 Jinhwan Kim & Changwoo Lim, This project is [MIT](https://opensource.org/licenses/MIT) licensed
