@@ -1,7 +1,5 @@
 ---
 title: "How to use mapVismodule"
-resource_files:
-  - images/module_structure.png
 ---
 
 ```{r, include = FALSE}
