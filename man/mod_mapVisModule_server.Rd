@@ -4,16 +4,23 @@
 \alias{mod_mapVisModule_server}
 \title{SHiny Module for map visualization.}
 \usage{
-mod_mapVisModule_server(id, inputData, i18n, lang)
+mod_mapVisModule_server(
+  id,
+  inputData,
+  i18n = NULL,
+  lang = reactive({
+     NULL
+ })
+)
 }
 \arguments{
 \item{id}{if of module}
 
 \item{inputData}{"reactive" data}
 
-\item{i18n}{shiny.i18n object}
+\item{i18n}{shiny.i18n object, default value is NULL}
 
-\item{leng}{shiny.i18n option like 'en'}
+\item{lang}{"reactive" shiny.i18n option like 'en', default value is NULL}
 }
 \description{
 mapVisModule Server Functions

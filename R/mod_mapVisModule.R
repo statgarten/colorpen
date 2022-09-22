@@ -3,7 +3,7 @@
 #' @description mapVisModule UI Function
 #'
 #' @param id id of module
-#' @param i18n shiny.i18n object
+#' @param i18n shiny.i18n object, default value is NULL
 #'
 #' @import shiny
 #' @import leaflet
@@ -11,7 +11,7 @@
 #' @importFrom phosphoricons ph
 #'
 #' @export
-mod_mapVisModule_ui <- function(id, i18n) {
+mod_mapVisModule_ui <- function(id, i18n = NULL) {
   ns <- NS(id)
   tagList(
     fluidRow(
@@ -27,13 +27,13 @@ mod_mapVisModule_ui <- function(id, i18n) {
           selectInput(ns("y"), label = "", choices = NULL, width = "100%"),
           sliderInput(
             ns("radius"),
-            label = i18n$t("marker size"),
+            label = ifelse(is.null(i18n), "marker size", i18n$t("marker size")),
             min = 1, max = 10, value = 5, step = 1, ticks = FALSE,
             width = "100%"
           ),
           checkboxInput(
             ns("cluster"),
-            label = i18n$t("Group marker"),
+            label = ifelse(is.null(i18n), "Group marker", i18n$t("Group marker")),
             width = "100%"
           ),
           div(
@@ -41,7 +41,7 @@ mod_mapVisModule_ui <- function(id, i18n) {
             selectInput(ns("color"), "", choices = NULL, width = "100%"),
             sliderInput(
               ns("opacity"),
-              label = i18n$t("alpha"),
+              label = ifelse(is.null(i18n), "alpha", i18n$t("alpha")),
               min = 0, max = 1, value = 0.5, step = 0.1, ticks = FALSE,
               width = "100%"
             )
@@ -50,7 +50,7 @@ mod_mapVisModule_ui <- function(id, i18n) {
             ns("draw"),
             label = tagList(
               phosphoricons::ph("arrow-circle-right"),
-              i18n$t("Draw")
+              label = ifelse(is.null(i18n), "Draw", i18n$t("Draw")),
             ),
             style = "font-weight: bold;background: #3EC70B;color: white;",
             width = "100%"
@@ -66,14 +66,14 @@ mod_mapVisModule_ui <- function(id, i18n) {
 #'
 #' @param id if of module
 #' @param inputData "reactive" data
-#' @param i18n shiny.i18n object
-#' @param leng shiny.i18n option like 'en'
+#' @param i18n shiny.i18n object, default value is NULL
+#' @param lang "reactive" shiny.i18n option like 'en', default value is NULL
 #' @import shiny.i18n
 #' @importFrom shinyjs hide show
 #' @import leaflet
 #'
 #' @export
-mod_mapVisModule_server <- function(id, inputData, i18n, lang) {
+mod_mapVisModule_server <- function(id, inputData, i18n = NULL, lang = reactive({NULL})) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     req(inputData)
@@ -86,13 +86,16 @@ mod_mapVisModule_server <- function(id, inputData, i18n, lang) {
       }
     })
 
+
+
     observeEvent(list(inputData(), lang()), {
+
       data <- inputData()
 
       updateSelectizeInput(
         session,
         inputId = "x",
-        label = i18n()$t("longitude column (X)"),
+        label = ifelse(is.null(i18n), "longitude column (X)", i18n()$t("longitude column (X)")),
         choices = names(Filter(is.numeric, data)), # Numeric only
         server = TRUE,
         selected = NULL
@@ -101,7 +104,7 @@ mod_mapVisModule_server <- function(id, inputData, i18n, lang) {
       updateSelectizeInput(
         session,
         inputId = "y",
-        label = i18n()$t("latitude column (Y)"),
+        label = ifelse(is.null(i18n), "latitude column (Y)", i18n()$t("latitude column (Y)")),
         choices = names(Filter(is.numeric, data)), # Numeric only
         server = TRUE,
         selected = NULL
@@ -110,7 +113,7 @@ mod_mapVisModule_server <- function(id, inputData, i18n, lang) {
       updateSelectizeInput(
         session,
         inputId = "color",
-        label = i18n()$t("color column"),
+        label = ifelse(is.null(i18n), "color column", i18n()$t("color column")),
         choices = union(names(Filter(is.numeric, data)), names(Filter(is.factor, data))),
         server = TRUE,
         selected = NULL
