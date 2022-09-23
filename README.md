@@ -1,4 +1,4 @@
-# :yellow_heart: colorpen <img src = {hexSticker_png} width = 120 align = 'right'>
+# :yellow_heart: colorpen <img src = "logo.png" width = 120 align = 'right'>
 
 Data visualization Shiny Module and functions. 
 
