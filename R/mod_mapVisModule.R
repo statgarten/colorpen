@@ -73,7 +73,9 @@ mod_mapVisModule_ui <- function(id, i18n = NULL) {
 #' @import leaflet
 #'
 #' @export
-mod_mapVisModule_server <- function(id, inputData, i18n = NULL, lang = reactive({NULL})) {
+mod_mapVisModule_server <- function(id, inputData, i18n = NULL, lang = reactive({
+                                      NULL
+                                    })) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     req(inputData)
@@ -89,7 +91,6 @@ mod_mapVisModule_server <- function(id, inputData, i18n = NULL, lang = reactive(
 
 
     observeEvent(list(inputData(), lang()), {
-
       data <- inputData()
 
       updateSelectizeInput(
