@@ -27,7 +27,7 @@ mod_pairModule_ui <- function(id) {
               phosphoricons::ph("arrow-circle-right"),
               label = "Draw",
             ),
-            style = "font-weight: bold;background: #3EC70B;color: white;",
+            style = "background: #004B4D;border-radius: 0;color: white;border: 0;",
             width = "100%"
           )
         )

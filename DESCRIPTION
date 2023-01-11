@@ -1,6 +1,6 @@
 Package: colorpen
 Title: Data visualize shiny module
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(
     person("Changwoo", "Lim", , "limcw@zarathu.com", role = c("aut")),
     person("Jinhwan", "Kim", , "hwanistic@gmail.com", role = c("aut", "cre"))

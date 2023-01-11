@@ -52,7 +52,7 @@ mod_mapVisModule_ui <- function(id, i18n = NULL) {
               phosphoricons::ph("arrow-circle-right"),
               label = ifelse(is.null(i18n), "Draw", i18n$t("Draw")),
             ),
-            style = "font-weight: bold;background: #3EC70B;color: white;",
+            style = "background: #004B4D;border-radius: 0;color: white;border: 0;",
             width = "100%"
           )
         )
