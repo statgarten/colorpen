@@ -1,15 +1,30 @@
 Package: colorpen
 Title: Data visualize shiny module
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: c(
-    person("Changwoo", "Lim", , "limcw@zarathu.com", role = c("aut")),
+    person("Changwoo", "Lim", , "limcw@zarathu.com", role = "aut"),
     person("Jinhwan", "Kim", , "hwanistic@gmail.com", role = c("aut", "cre"))
   )
-Description: Provides data visualize functions while gets prarmeter as text input.
+Description: Provides data visualize functions while gets prarmeter as
+    text input.
 License: MIT + file LICENSE
+URL: https://github.com/statgarten/colorpen
+Imports: 
+    cli,
+    dplyr,
+    GGally,
+    ggmosaic,
+    leaflet,
+    magrittr,
+    phosphoricons,
+    plotly,
+    shiny,
+    shiny.i18n,
+    shinyjs,
+    tidyverse
+Suggests: 
+    knitr,
+    rmarkdown
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-Suggests: 
-    rmarkdown
-URL: https://github.com/statgarten/colorpen

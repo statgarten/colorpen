@@ -16,11 +16,13 @@ mod_mapVisModule_ui <- function(id, i18n = NULL) {
   tagList(
     fluidRow(
       column( # Result Area
-        width = 9,
+        width = 8,
+        style = "border-right: dotted 1px black",
         leafletOutput(outputId = ns("mymap"))
       ),
       column( # Options
-        width = 3,
+        width = 4,
+        style = "border-left: dotted 1px black",
         fluidRow(
           style = "margin:auto",
           selectInput(ns("x"), label = "", choices = NULL, width = "100%"),
@@ -52,7 +54,7 @@ mod_mapVisModule_ui <- function(id, i18n = NULL) {
               phosphoricons::ph("arrow-circle-right"),
               label = ifelse(is.null(i18n), "Draw", i18n$t("Draw")),
             ),
-            style = "background: #004B4D;border-radius: 0;color: white;border: 0;",
+            class = "myButton",
             width = "100%"
           )
         )

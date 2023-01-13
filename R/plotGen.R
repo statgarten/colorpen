@@ -1,5 +1,4 @@
 #' @title plotGen
-#' @export
 #' @import shiny
 #' @import dplyr
 #' @import tidyverse
