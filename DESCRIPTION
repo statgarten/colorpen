@@ -10,21 +10,21 @@ Description: Provides data visualize functions while gets prarmeter as
 License: MIT + file LICENSE
 URL: https://github.com/statgarten/colorpen
 Imports: 
-    cli,
-    dplyr,
-    GGally,
-    ggmosaic,
-    leaflet,
-    magrittr,
-    phosphoricons,
-    plotly,
-    shiny,
-    shiny.i18n,
-    shinyjs,
-    tidyverse
+    cli (>= 3.6),
+    dplyr (>= 1.1),
+    GGally (>= 2.1),
+    ggmosaic (>= 0.3),
+    leaflet (>= 2.1),
+    magrittr (>= 2.0),
+    phosphoricons (>= 0.2),
+    plotly (>= 4.10),
+    shiny (>= 1.7.4),
+    shiny.i18n (>= 0.3),
+    shinyjs (>= 2.1),
+    tidyverse (>= 2.0)
 Suggests: 
-    knitr,
-    rmarkdown
+    knitr (>= 1.43),
+    rmarkdown (>= 2.23)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
