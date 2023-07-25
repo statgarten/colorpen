@@ -16,7 +16,7 @@ Imports:
     ggmosaic (>= 0.3),
     leaflet (>= 2.1),
     magrittr (>= 2.0),
-    phosphoricons (>= 0.2),
+    phosphoricons (>= 0.1),
     plotly (>= 4.10),
     shiny (>= 1.7.4),
     shiny.i18n (>= 0.3),
