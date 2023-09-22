@@ -86,11 +86,11 @@ mod_mosaicModule_server <- function(id, inputData) {
       data <- inputData()
       output$plot <- renderPlot({
         eval(parse(text = paste0(
-          'ggplot(data = data) + ',
-            'geom_mosaic(',
-            'aes(x = product(', input$x, '), fill = ', input$fill, ')) + ',
-          'theme_mosaic() + theme(legend.position = ', "'",'none',"'", ')')
-        ))
+          "ggplot(data = data) + ",
+          "geom_mosaic(",
+          "aes(x = product(", input$x, "), fill = ", input$fill, ")) + ",
+          "theme_mosaic() + theme(legend.position = ", "'", "none", "'", ")"
+        )))
       })
     })
   })
