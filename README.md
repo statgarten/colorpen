@@ -26,7 +26,7 @@ library(colorpen)
 * :octocat: Changwoo Lim [@changwoolim](https://github.com/changwoolim)
 
 ## :memo: License
-Copyright :copyright: 2022 Jinhwan Kim & Changwoo Lim, This project is [MIT](https://opensource.org/licenses/MIT) licensed
+Copyright :copyright: 2023 Jinhwan Kim & Changwoo Lim, This project is [MIT](https://opensource.org/licenses/MIT) licensed
 
 *This README was generated with :two_hearts: by [shinyReadme](http://github.com/jhk0530/shinyReadme)*
 
