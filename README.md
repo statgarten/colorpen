@@ -1,6 +1,6 @@
 # :yellow_heart: colorpen <img src = "logo.png" width = 120 align = 'right'>
 
-Shiny module that provide data visualization functions. 
+Shiny module that provide data visualization functions. \r\n
 Shiny와 호환되는 데이터 시각화 함수를 제공하는 패키지입니다.
 
 ## :clipboard: Dependency
