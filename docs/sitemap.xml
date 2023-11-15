@@ -37,6 +37,18 @@
     <loc>https://www.statgarten.com/colorpen/reference/mod_mapVisModule_ui.html</loc>
   </url>
   <url>
+    <loc>https://www.statgarten.com/colorpen/reference/mod_mosaicModule_server.html</loc>
+  </url>
+  <url>
+    <loc>https://www.statgarten.com/colorpen/reference/mod_mosaicModule_ui.html</loc>
+  </url>
+  <url>
+    <loc>https://www.statgarten.com/colorpen/reference/mod_pairModule_server.html</loc>
+  </url>
+  <url>
+    <loc>https://www.statgarten.com/colorpen/reference/mod_pairModule_ui.html</loc>
+  </url>
+  <url>
     <loc>https://www.statgarten.com/colorpen/reference/plotGen.html</loc>
   </url>
 </urlset>
