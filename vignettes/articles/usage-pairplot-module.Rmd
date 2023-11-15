@@ -1,0 +1,103 @@
+---
+title: "How to use pairmodule"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(colorpen)
+```
+
+## Introduction
+
+`colorpen`'s `pairModule` uses [`GGally`](https://ggobi.github.io/ggally/) to visualize pair-level plot.
+
+In this article, we'll use mtcars dataset.
+
+This article is based on **0.0.4** Version.
+
+## Declare module
+
+`colorpen`'s module assumes that used in the [Shiny](https://shiny.rstudio.com/) application.
+
+and You can use snippet(type `shinyapp`) to build very basic shiny application.
+
+``` r
+library(shiny)
+
+ui <- fluidPage(
+ 
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+This application will show nothing.
+
+So let's add `pairModule` in **ui**
+
+``` r
+ui <- fluidPage(
+  mod_pairModule_ui('pairModule_1')
+)
+```
+
+also, `pairModule` in **server**.
+
+``` r
+server <- function(input, output, session) {
+  colorpen::mod_pairModule_server('pairModule_1', inputData)
+}
+
+```
+
+Note that, we didn't declare `inputData` yet. 
+
+So final (which is very basic) code will like this.
+
+``` r
+library(shiny)
+
+ui <- fluidPage(
+  mod_mapVisModule_ui(
+    id = 'MapModule'
+  )
+)
+
+server <- function(input, output, session) {
+  inputData <- reactive({mtcars}) ## THIS CODE ADDED
+  colorpen::mod_pairModule_server('pairModule_1', inputData)
+}
+
+shinyApp(ui, server) # run application
+```
+
+You should notice 2 things.
+
+1.  both `id` in **ui** and **server** should be same.
+2.  `inputData` in **server** should be format of **reactive**
+
+## Structure of pairModule
+
+<img src="image/pair_structure.png"/>
+
+pairModule is consisted with `Result Area` and `Control Area`
+
+and below using flow.
+
+1.  Declare module (we did already)
+2.  Set columns of data to visualize
+3.  [Draw]{style="color:green"}.
+
+For more information about leaflet functions, visit [this page](https://ggobi.github.io/ggally/).
+
+For any issue or suggestion, please make issue in [colorpen's github](https://github.com/statgarten/colorpen/issues).

@@ -46,6 +46,7 @@ mod_pairModule_ui <- function(id) {
 #'
 #' @import magrittr
 #' @importFrom dplyr select
+#' @importFrom GGally ggpairs
 #'
 #' @export
 mod_pairModule_server <- function(id, inputData) {
