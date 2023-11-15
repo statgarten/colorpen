@@ -1,0 +1,109 @@
+---
+title: "How to use mosaicmodule"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(colorpen)
+```
+
+## Introduction
+
+`colorpen`'s `mosaicModule` uses [`ggmosaic`](https://github.com/haleyjeppson/ggmosaic) to generate mosaic plot.
+
+In this article, we'll use `fly` dataset from `ggmosaic` package.
+
+This article is based on **0.0.4** Version.
+
+## Declare module
+
+`colorpen`'s module assumes that used in the [Shiny](https://shiny.rstudio.com/) application.
+
+and You can use snippet(type `shinyapp`) to build very basic shiny application.
+
+``` r
+library(shiny)
+
+ui <- fluidPage(
+ 
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+This application will show nothing.
+
+So let's add `mosaicModule` in **ui**
+
+``` r
+ui <- fluidPage(
+  mod_mosaicModule_ui('mosaicModule_1')
+)
+
+```
+
+also, `mosaicModule` in **server**.
+
+``` r
+server <- function(input, output, session) {
+  colorpen::mod_mosaicModule_server('mosaicModule_1', inputData)
+}
+
+```
+
+Note that, we didn't declare `inputData` yet. 
+
+So final (which is very basic) code will like this.
+
+``` r
+library(shiny)
+library(ggmosaic) # for fly dataset
+library(dplyr) # for pipe
+
+ui <- fluidPage(
+  colorpen::mod_mosaicModule_ui('mosaicModule_1')
+)
+
+server <- function(input, output, session) {
+  
+  flights <- fly  %>%
+    filter(!is.na(do_you_recline), !is.na(rude_to_recline))
+  
+  inputData <- reactive({flights})
+  colorpen::mod_mosaicModule_server('mosaicModule_1', inputData)
+}
+
+shinyApp(ui, server)
+```
+
+You should notice 2 things.
+
+1.  both `id` in **ui** and **server** should be same.
+2.  `inputData` in **server** should be format of **reactive**
+
+## Structure of mosaicModule
+
+<img src="image/mosaic_structure.png"/>
+
+pairModule is consisted with `Result Area` and `Control Area`
+
+and below using flow.
+
+1.  Declare module (we did already)
+2.  Set columns of data to visualize
+3.  [Draw]{style="color:green"}.
+
+For more information about leaflet functions, visit [this page](https://haleyjeppson.github.io/ggmosaic/).
+
+For any issue or suggestion, please make issue in [colorpen's github](https://github.com/statgarten/colorpen/issues).
+
