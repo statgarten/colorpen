@@ -1,10 +1,9 @@
 # :yellow_heart: colorpen <img src = "logo.png" width = 120 align = 'right'>
 
 Shiny module that provide data visualization functions.
-
 Shiny와 호환되는 데이터 시각화 함수를 제공하는 패키지입니다.
 
-## :clipboard: Dependency
+## :clipboard: Dependency / 의존 관계
 * [leaflet](https://github.com/rstudio/leaflet) - 2.0.3
 * [shiny.i18n](https://github.com/Appsilon/shiny.i18n) - 0.2.0
 * [plotly](https://github.com/plotly/plotly.R) - 4.10.0
