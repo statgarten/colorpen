@@ -11,7 +11,7 @@ Shiny와 호환되는 데이터 시각화 함수를 제공하는 패키지입니
 * [shinyjs](https://github.com/daattali/shinyjs) - 2.1.0
 * [dplyr](https://github.com/tidyverse/dplyr/) - 1.0.10
 
-## :wrench: Install
+## :wrench: Install / 설치
 
 ```r
 remotes::install_github('statgarten/colorpen')
