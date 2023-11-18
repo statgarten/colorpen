@@ -18,7 +18,7 @@ remotes::install_github('statgarten/colorpen')
 library(colorpen)
 ```
 
-## :+1: Recommended package to use colorpen
+## :+1: Recommended packages to use colorpen
 - [datamods](https://github.com/dreamRs/datamods)
 - [door](https://github.com/statgarten/door)
 
