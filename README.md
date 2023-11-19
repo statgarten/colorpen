@@ -18,7 +18,7 @@ remotes::install_github('statgarten/colorpen')
 library(colorpen)
 ```
 
-## :+1: Colorpen과 같이 쓰면 좋은 패키
+## :+1: Colorpen과 같이 쓰면 좋은 패키지
 - [datamods](https://github.com/dreamRs/datamods)
 - [door](https://github.com/statgarten/door)
 
