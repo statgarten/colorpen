@@ -28,6 +28,5 @@ library(colorpen)
 
 ## :memo: License
 Copyright :copyright: 2023 Jinhwan Kim & Changwoo Lim, This project is [MIT](https://opensource.org/licenses/MIT) licensed
-
-*(http://github.com/jhk0530/shinyReadme)*
+Copyright :copyright: 2022 Jinhwan Kim & Changwoo Lim. 이 프로젝트는 MIT 라이센스를 따릅니다.
 
