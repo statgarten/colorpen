@@ -22,7 +22,7 @@ library(colorpen)
 - [datamods](https://github.com/dreamRs/datamods)
 - [door](https://github.com/statgarten/door)
 
-## :blush: Authors
+## :blush: Authors / 만든 사람들
 * :octocat: Jinhwan Kim [@jhk0530](https://github.com/jhk0530)
 * :octocat: Changwoo Lim [@changwoolim](https://github.com/changwoolim)
 
